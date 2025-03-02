@@ -1,45 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:rama_dbk_crm/home_Components/service_section.dart';
+import '../home_Components/hero.dart';
+import '../widgets/footer.dart';
+import '../home_Components/featured_vehicles.dart';
+import '../home_Components/about_section.dart';
+import '../home_Components/statistics_section.dart';
+import '../home_Components/testimonials_section.dart';
+import '../home_Components/cta_section.dart';
+
+/// HomeScreen for RamaDBK
+///
+/// The main landing page for the RamaDBK vehicle selling company.
+/// Assembles all the individual components into a cohesive page.
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Hero section will be added here
-          Container(
-            height: 500, // Temporary height, will be replaced with actual hero component
-            color: Colors.blue.withOpacity(0.1),
-            child: const Center(
-              child: Text(
-                'Hero Section Placeholder',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+          // Animated Hero Section
+          HeroSection(),
           
-          // Other home content sections
-          Container(
-            padding: const EdgeInsets.all(32),
-            child: const Column(
-              children: [
-                Text(
-                  'Welcome to Rama',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula.',
-                  style: TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
+          // Featured Vehicles Section
+          FeaturedVehicles(),
+          
+          // About Us Section
+          AboutSection(),
+          
+          // Services Section
+          ServicesSection(),
+          
+          // Statistics Section
+          StatisticsSection(),
+          
+          // Testimonials Section
+          TestimonialsSection(),
+          
+          // Call To Action Section
+          CtaSection(),
+          
+          // Footer
+          Footer(),
         ],
       ),
     );

@@ -14,13 +14,20 @@ class MyApp extends StatelessWidget {
       title: 'Rama CRM',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: const Color(0xFF3F51B5), // Indigo as primary color
+        primaryColor: const Color(0xFFFF2D55), // Bright red
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF3F51B5),
-          brightness: Brightness.light,
+          seedColor: const Color(0xFFFF2D55),
+          brightness: Brightness.dark, // Dark theme to match background
         ),
         fontFamily: 'Roboto',
         useMaterial3: true,
+        scaffoldBackgroundColor: Colors.transparent,
+        // Text theme for better readability on dark background
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),
+          titleLarge: TextStyle(color: Colors.white),
+        ),
       ),
       home: const MainScreen(),
     );
