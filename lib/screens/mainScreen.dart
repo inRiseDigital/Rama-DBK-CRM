@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
-import '../widgets/animated_background.dart';
 import 'homeScreen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -24,35 +23,32 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedBackground(
-        glowColor: const Color(0xFFFF2D55), // Bright red
-        intensity: 1.0,
-        child: Column(
-          children: [
-            // Static navbar that persists across screens
-            NavBar(
-              selectedIndex: _currentIndex,
-              onItemSelected: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-            ),
-            // Content area that changes based on navigation
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Current screen content
-                    _screens[_currentIndex],
-                    // Static footer that persists across screens
-                    const Footer(),
-                  ],
-                ),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      body: Column(
+        children: [
+          // Static navbar that persists across screens
+          NavBar(
+            selectedIndex: _currentIndex,
+            onItemSelected: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
+          // Content area that changes based on navigation
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Current screen content
+                  _screens[_currentIndex],
+                  // Static footer that persists across screens
+                  const Footer(),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

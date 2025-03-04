@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rama_dbk_crm/home_Components/service_section.dart';
 import '../home_Components/hero.dart';
-import '../widgets/footer.dart';
 import '../home_Components/featured_vehicles.dart';
 import '../home_Components/about_section.dart';
 import '../home_Components/statistics_section.dart';
@@ -23,27 +22,24 @@ class HomeScreen extends StatelessWidget {
         children: [
           // Animated Hero Section
           HeroSection(),
-          
+
           // Featured Vehicles Section
           FeaturedVehicles(),
-          
-          // About Us Section
-          AboutSection(),
-          
+
           // Services Section
           ServicesSection(),
-          
+
           // Statistics Section
           StatisticsSection(),
-          
+
           // Testimonials Section
           TestimonialsSection(),
-          
+
+          // About Us Section
+          AboutSection(),
+
           // Call To Action Section
           CtaSection(),
-          
-          // Footer
-          Footer(),
         ],
       ),
     );

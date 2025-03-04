@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 /// A responsive footer that adapts to different screen sizes.
 /// Contains company information, navigation links, contact information,
 /// newsletter subscription, and social media links.
-
+///
+/// Hover effects are added for desktop/web via `_HoverLink` and `_HoverIcon`.
 class Footer extends StatelessWidget {
   const Footer({super.key});
 
@@ -21,14 +22,18 @@ class Footer extends StatelessWidget {
         vertical: 50.0,
         horizontal: isMobile ? 20.0 : 50.0,
       ),
-      child: isMobile
-          ? _buildMobileFooter()
-          : isTablet
+      child:
+          isMobile
+              ? _buildMobileFooter()
+              : isTablet
               ? _buildTabletFooter()
               : _buildDesktopFooter(),
     );
   }
 
+  // -------------------------------------------------------
+  //  Desktop Layout
+  // -------------------------------------------------------
   Widget _buildDesktopFooter() {
     return Column(
       children: [
@@ -36,28 +41,16 @@ class Footer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Company Information
-            Expanded(
-              flex: 3,
-              child: _buildCompanyInfo(),
-            ),
-            
+            Expanded(flex: 3, child: _buildCompanyInfo()),
+
             // Quick Links
-            Expanded(
-              flex: 2,
-              child: _buildQuickLinks(),
-            ),
-            
+            Expanded(flex: 2, child: _buildQuickLinks()),
+
             // Services
-            Expanded(
-              flex: 2,
-              child: _buildServices(),
-            ),
-            
+            Expanded(flex: 2, child: _buildServices()),
+
             // Contact & Newsletter
-            Expanded(
-              flex: 3,
-              child: _buildContactNewsletter(),
-            ),
+            Expanded(flex: 3, child: _buildContactNewsletter()),
           ],
         ),
         const SizedBox(height: 40),
@@ -68,6 +61,9 @@ class Footer extends StatelessWidget {
     );
   }
 
+  // -------------------------------------------------------
+  //  Tablet Layout
+  // -------------------------------------------------------
   Widget _buildTabletFooter() {
     return Column(
       children: [
@@ -85,7 +81,6 @@ class Footer extends StatelessWidget {
                 ],
               ),
             ),
-            
             // Services and Contact
             Expanded(
               child: Column(
@@ -107,6 +102,9 @@ class Footer extends StatelessWidget {
     );
   }
 
+  // -------------------------------------------------------
+  //  Mobile Layout
+  // -------------------------------------------------------
   Widget _buildMobileFooter() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,6 +124,9 @@ class Footer extends StatelessWidget {
     );
   }
 
+  // -------------------------------------------------------
+  //  Company Info
+  // -------------------------------------------------------
   Widget _buildCompanyInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,48 +135,55 @@ class Footer extends StatelessWidget {
           'assets/images/Rama_logo.png',
           height: 50,
           // Fallback if image doesn't exist
-          errorBuilder: (context, error, stackTrace) => Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                'R',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+          errorBuilder:
+              (context, error, stackTrace) => Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Text(
+                    'R',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
         ),
         const SizedBox(height: 20),
+
+        // "RamaDBK LTD\nJapanese Car Exporter"
         const Text(
-          'RamaDBK',
+          'RamaDBK LTD\nJapanese Car Exporter',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
+            height: 1.4,
           ),
         ),
         const SizedBox(height: 10),
+
         const Text(
-          'Premium vehicle dealership offering a wide range of luxury and performance vehicles with exceptional customer service.',
-          style: TextStyle(
-            color: Colors.white70,
-            height: 1.5,
-          ),
+          'Premium vehicle dealership offering a wide range of luxury '
+          'and performance vehicles with exceptional customer service.',
+          style: TextStyle(color: Colors.white70, height: 1.5),
         ),
         const SizedBox(height: 20),
+
         _buildSocialLinks(),
       ],
     );
   }
 
+  // -------------------------------------------------------
+  //  Quick Links (+ Other Info)
+  // -------------------------------------------------------
   Widget _buildQuickLinks() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,10 +203,30 @@ class Footer extends StatelessWidget {
         _buildFooterLink('Testimonials'),
         _buildFooterLink('Blog'),
         _buildFooterLink('Contact Us'),
+
+        const SizedBox(height: 20),
+        const Text(
+          'Other Info',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _buildFooterLink('Shipping Info'),
+        _buildFooterLink('Route to RamaDBK'),
+        _buildFooterLink('OCD/Meter Check Service'),
+        _buildFooterLink('Why Japanese Used Cars'),
+        _buildFooterLink('Our Bank Details'),
+        _buildFooterLink('Latest News'),
       ],
     );
   }
 
+  // -------------------------------------------------------
+  //  Our Services (+ Customer Services)
+  // -------------------------------------------------------
   Widget _buildServices() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,10 +246,31 @@ class Footer extends StatelessWidget {
         _buildFooterLink('Vehicle Maintenance'),
         _buildFooterLink('Parts & Accessories'),
         _buildFooterLink('Trade-In Appraisal'),
+
+        const SizedBox(height: 20),
+        const Text(
+          'Customer Services',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _buildFooterLink('Search for a car'),
+        _buildFooterLink('After Sales Guarantee'),
+        _buildFooterLink('Car Insurance'),
+        _buildFooterLink('Payment Security'),
+        _buildFooterLink('Sales Team'),
+        _buildFooterLink('Import Regulations'),
+        _buildFooterLink('Request Call Back'),
       ],
     );
   }
 
+  // -------------------------------------------------------
+  //  Contact & Newsletter
+  // -------------------------------------------------------
   Widget _buildContactNewsletter() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,10 +284,18 @@ class Footer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 15),
-        _buildContactItem(Icons.location_on, '123 Automotive Avenue, Car City'),
-        _buildContactItem(Icons.phone, '+1 (555) 123-4567'),
-        _buildContactItem(Icons.email, 'info@ramadbk.com'),
-        _buildContactItem(Icons.access_time, 'Mon-Sat: 9:00 AM - 6:00 PM'),
+        _buildContactItem(
+          Icons.location_on,
+          '201 Rama HQ Building, 2-1-17 Shinkoyasu,\n'
+          'Kanagawa-ku, Yokohama, Japan\n'
+          'Post Code 221-0013',
+        ),
+        _buildContactItem(Icons.phone, '+81-45-402-6117'),
+        _buildContactItem(Icons.fax_outlined, '+81-45-402-0689'),
+        _buildContactItem(Icons.email, 'sales@ramadbk.com'),
+        _buildContactItem(Icons.web, 'www.RamaDBK.com'),
+        _buildContactItem(Icons.phone_android, '+81-90-5580-6914'),
+
         const SizedBox(height: 25),
         const Text(
           'Newsletter',
@@ -254,31 +311,17 @@ class Footer extends StatelessWidget {
     );
   }
 
+  // -------------------------------------------------------
+  //  Footer Link (with hover)
+  // -------------------------------------------------------
   Widget _buildFooterLink(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: InkWell(
-        onTap: () {},
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.arrow_right,
-              color: Colors.red,
-              size: 16,
-            ),
-            const SizedBox(width: 5),
-            Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 14,
-              ),
-            ),
-          ],
-        ),
-      ),
+    // Instead of a simple InkWell, we use our new _HoverLink widget.
+    return _HoverLink(
+      text: text,
+      icon: Icons.arrow_right, // same icon you used before
+      onTap: () {
+        // TODO: Implement navigation
+      },
     );
   }
 
@@ -288,19 +331,12 @@ class Footer extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: Colors.red,
-            size: 16,
-          ),
+          Icon(icon, color: Colors.red, size: 16),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
             ),
           ),
         ],
@@ -314,10 +350,7 @@ class Footer extends StatelessWidget {
       children: [
         const Text(
           'Subscribe to receive updates on new arrivals and special offers',
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white70, fontSize: 14),
         ),
         const SizedBox(height: 15),
         Row(
@@ -326,33 +359,33 @@ class Footer extends StatelessWidget {
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Your Email',
-                  hintStyle: TextStyle(color: Colors.white54),
+                  hintStyle: const TextStyle(color: Colors.white54),
                   filled: true,
                   fillColor: Colors.white12,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(4),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 15,
                     vertical: 15,
                   ),
                 ),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
             const SizedBox(width: 10),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                // TODO: Implement subscribe action
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
-                padding: EdgeInsets.symmetric(
-                  vertical: 15,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 15),
               ),
               child: const Text('Subscribe'),
             ),
@@ -362,6 +395,9 @@ class Footer extends StatelessWidget {
     );
   }
 
+  // -------------------------------------------------------
+  //  Social Links (with hover icons)
+  // -------------------------------------------------------
   Widget _buildSocialLinks() {
     return Row(
       children: [
@@ -372,93 +408,86 @@ class Footer extends StatelessWidget {
         _buildSocialIcon(Icons.camera_alt),
         const SizedBox(width: 10),
         _buildSocialIcon(Icons.youtube_searched_for),
+        const SizedBox(width: 10),
+        // e.g., DMCA protected
+        _buildSocialIcon(Icons.security, tooltip: 'DMCA Protected'),
       ],
     );
   }
 
-  Widget _buildSocialIcon(IconData icon) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: Colors.white12,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: IconButton(
-        icon: Icon(
-          icon,
-          color: Colors.white,
-          size: 18,
-        ),
-        onPressed: () {},
-      ),
+  Widget _buildSocialIcon(IconData icon, {String? tooltip}) {
+    return _HoverIcon(
+      icon: icon,
+      tooltip: tooltip,
+      onPressed: () {
+        // TODO: Implement social link action
+      },
     );
   }
 
+  // -------------------------------------------------------
+  //  Divider
+  // -------------------------------------------------------
   Widget _buildDivider() {
-    return Container(
-      height: 1,
-      color: Colors.white12,
-    );
+    return Container(height: 1, color: Colors.white12);
   }
 
+  // -------------------------------------------------------
+  //  Bottom Section (Optional hover on links)
+  // -------------------------------------------------------
   Widget _buildBottomSection({bool isMobile = false}) {
     return isMobile
         ? Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                '© 2025 RamaDBK. All Rights Reserved.',
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildBottomLink('Privacy Policy'),
-                  _buildBottomDot(),
-                  _buildBottomLink('Terms of Service'),
-                  _buildBottomDot(),
-                  _buildBottomLink('Sitemap'),
-                ],
-              ),
-            ],
-          )
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              '© 2025 RamaDBK. All Rights Reserved.',
+              style: TextStyle(color: Colors.white54, fontSize: 14),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildBottomLink('Privacy Policy'),
+                _buildBottomDot(),
+                _buildBottomLink('Terms of Service'),
+                _buildBottomDot(),
+                _buildBottomLink('Sitemap'),
+              ],
+            ),
+          ],
+        )
         : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                '© 2025 RamaDBK. All Rights Reserved.',
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 14,
-                ),
-              ),
-              Row(
-                children: [
-                  _buildBottomLink('Privacy Policy'),
-                  _buildBottomDot(),
-                  _buildBottomLink('Terms of Service'),
-                  _buildBottomDot(),
-                  _buildBottomLink('Sitemap'),
-                ],
-              ),
-            ],
-          );
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              '© 2025 RamaDBK. All Rights Reserved.',
+              style: TextStyle(color: Colors.white54, fontSize: 14),
+            ),
+            Row(
+              children: [
+                _buildBottomLink('Privacy Policy'),
+                _buildBottomDot(),
+                _buildBottomLink('Terms of Service'),
+                _buildBottomDot(),
+                _buildBottomLink('Sitemap'),
+              ],
+            ),
+          ],
+        );
   }
 
   Widget _buildBottomLink(String text) {
-    return InkWell(
-      onTap: () {},
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white54,
-          fontSize: 14,
-        ),
+    // Use the same hover link approach for these bottom links if you want.
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: _HoverLink(
+        text: text,
+        icon: null, // No arrow icon here
+        hoverColor: Colors.white70,
+        onTap: () {
+          // TODO: Implement navigation
+        },
       ),
     );
   }
@@ -472,6 +501,121 @@ class Footer extends StatelessWidget {
         decoration: const BoxDecoration(
           color: Colors.white54,
           shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+// --------------------------------------------------
+//  HOVER WIDGETS
+// --------------------------------------------------
+
+/// A link widget that detects mouse hover and changes style accordingly.
+class _HoverLink extends StatefulWidget {
+  final String text;
+  final IconData? icon;
+  final Color hoverColor;
+  final VoidCallback? onTap;
+
+  const _HoverLink({
+    Key? key,
+    required this.text,
+    this.icon,
+    this.hoverColor = Colors.white,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  State<_HoverLink> createState() => _HoverLinkState();
+}
+
+class _HoverLinkState extends State<_HoverLink> {
+  bool _isHovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovering = true),
+      onExit: (_) => setState(() => _isHovering = false),
+      child: InkWell(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.icon != null)
+                Icon(
+                  widget.icon,
+                  color: _isHovering ? widget.hoverColor : Colors.red,
+                  size: 16,
+                ),
+              if (widget.icon != null) const SizedBox(width: 5),
+              Text(
+                widget.text,
+                style: TextStyle(
+                  color: _isHovering ? widget.hoverColor : Colors.white70,
+                  fontSize: 14,
+                  decoration:
+                      _isHovering
+                          ? TextDecoration.underline
+                          : TextDecoration.none,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A circular icon button that detects mouse hover and changes style accordingly.
+class _HoverIcon extends StatefulWidget {
+  final IconData icon;
+  final String? tooltip;
+  final VoidCallback onPressed;
+
+  const _HoverIcon({
+    Key? key,
+    required this.icon,
+    required this.onPressed,
+    this.tooltip,
+  }) : super(key: key);
+
+  @override
+  State<_HoverIcon> createState() => _HoverIconState();
+}
+
+class _HoverIconState extends State<_HoverIcon> {
+  bool _isHovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: widget.tooltip ?? '',
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovering = true),
+        onExit: (_) => setState(() => _isHovering = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: _isHovering ? Colors.white24 : Colors.white12,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: IconButton(
+            icon: Icon(
+              widget.icon,
+              color: _isHovering ? Colors.red : Colors.white,
+              size: 18,
+            ),
+            onPressed: widget.onPressed,
+          ),
         ),
       ),
     );

@@ -57,15 +57,15 @@ class _NavBarState extends State<NavBar> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildNavItem(0, 'Home', true),
+              _buildNavItem(0, 'Home', false),
               SizedBox(width: 20), // Added spacing between items
-              _buildNavItem(1, 'About Us', false),
+              _buildNavItem(1, 'Stock List', false),
               SizedBox(width: 20), // Added spacing between items
-              _buildNavItem(2, 'Stock List', true),
+              _buildNavItem(2, 'Spare Parts', true),
               SizedBox(width: 20), // Added spacing between items
-              _buildNavItem(3, 'Spare Parts', true),
+              _buildNavItem(3, 'Our Services ', true),
               SizedBox(width: 20), // Added spacing between items
-              _buildNavItem(4, 'Our Services', true),
+              _buildNavItem(4, 'About Us', true),
               SizedBox(width: 20), // Added spacing between items
               _buildContactButton(5), // Replace with special contact button
             ],
@@ -295,11 +295,11 @@ class _NavBarState extends State<NavBar> {
                 child: ListView(
                   children: [
                     SizedBox(height: 8),
-                    _buildMobileMenuItem(0, 'Home', true),
-                    _buildMobileMenuItem(1, 'About Us', false),
-                    _buildMobileMenuItem(2, 'Stock List', true),
-                    _buildMobileMenuItem(3, 'Spare Parts', true),
-                    _buildMobileMenuItem(4, 'Our Services', true),
+                    _buildMobileMenuItem(0, 'Home', false),
+                    _buildMobileMenuItem(1, 'Stock List', false),
+                    _buildMobileMenuItem(2, 'Spare Parts', true),
+                    _buildMobileMenuItem(3, 'Our Services', true),
+                    _buildMobileMenuItem(4, 'About Us', true),
                     _buildMobileContactItem(
                       5,
                     ), // Special contact item for mobile
