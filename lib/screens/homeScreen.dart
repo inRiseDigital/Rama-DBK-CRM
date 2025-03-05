@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
           AboutSection(),
 
           // Call To Action Section
-          CtaSection(),
+          //CtaSection(),
         ],
       ),
     );

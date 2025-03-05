@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 ///
 /// Displays customer testimonials in a responsive card layout.
 /// Each testimonial includes a quote, customer name, and their title.
-
 class TestimonialsSection extends StatelessWidget {
   const TestimonialsSection({super.key});
 
@@ -12,7 +11,7 @@ class TestimonialsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final bool isMobile = screenSize.width < 768;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: 60.0,
@@ -25,146 +24,166 @@ class TestimonialsSection extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Text(
-                  'TESTIMONIALS',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.0,
-                    letterSpacing: 2.0,
-                  ),
-                ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 Text(
                   'What Our Customers Say',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: isMobile ? 24.0 : 32.0,
+                    fontSize: isMobile ? 24.0 : 36.0,
+                    color: Colors.red,
                   ),
                 ),
-                SizedBox(height: 10.0),
-                Container(
-                  width: 50.0,
-                  height: 3.0,
-                  color: Colors.red,
-                ),
-                SizedBox(height: 40.0),
+                const SizedBox(height: 10.0),
+                Container(width: 50.0, height: 3.0, color: Colors.red),
+                const SizedBox(height: 40.0),
               ],
             ),
           ),
-          
+
           // Testimonials
           isMobile
               ? Column(
-                  children: [
-                    _buildTestimonialCard(
-                      'John Davis',
-                      'Business Executive',
-                      'Exceptional service from start to finish. RamaDBK made my car buying experience smooth and enjoyable. I couldn\'t be happier with my new luxury sedan.',
-                    ),
-                    SizedBox(height: 20.0),
-                    _buildTestimonialCard(
-                      'Emily Johnson',
-                      'Marketing Director',
-                      'The team at RamaDBK went above and beyond to help me find the perfect vehicle. Their knowledge and professionalism are unmatched in the industry.',
-                    ),
-                    SizedBox(height: 20.0),
-                    _buildTestimonialCard(
-                      'Robert Chen',
-                      'Tech Entrepreneur',
-                      'As a repeat customer, I can confidently say that RamaDBK provides the best vehicle purchasing experience. Their selection of premium cars is impressive.',
-                    ),
-                  ],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _buildTestimonialCard(
-                        'John Davis',
-                        'Business Executive',
+                children: [
+                  HoverTestimonialCard(
+                    name: 'John Davis',
+                    title: 'Business Executive',
+                    testimonial:
                         'Exceptional service from start to finish. RamaDBK made my car buying experience smooth and enjoyable. I couldn\'t be happier with my new luxury sedan.',
-                      ),
-                    ),
-                    SizedBox(width: 20.0),
-                    Expanded(
-                      child: _buildTestimonialCard(
-                        'Emily Johnson',
-                        'Marketing Director',
+                  ),
+                  const SizedBox(height: 20.0),
+                  HoverTestimonialCard(
+                    name: 'Emily Johnson',
+                    title: 'Marketing Director',
+                    testimonial:
                         'The team at RamaDBK went above and beyond to help me find the perfect vehicle. Their knowledge and professionalism are unmatched in the industry.',
-                      ),
-                    ),
-                    SizedBox(width: 20.0),
-                    Expanded(
-                      child: _buildTestimonialCard(
-                        'Robert Chen',
-                        'Tech Entrepreneur',
+                  ),
+                  const SizedBox(height: 20.0),
+                  HoverTestimonialCard(
+                    name: 'Robert Chen',
+                    title: 'Tech Entrepreneur',
+                    testimonial:
                         'As a repeat customer, I can confidently say that RamaDBK provides the best vehicle purchasing experience. Their selection of premium cars is impressive.',
-                      ),
+                  ),
+                ],
+              )
+              : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: HoverTestimonialCard(
+                      name: 'John Davis',
+                      title: 'Business Executive',
+                      testimonial:
+                          'Exceptional service from start to finish. RamaDBK made my car buying experience smooth and enjoyable. I couldn\'t be happier with my new luxury sedan.',
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 20.0),
+                  Expanded(
+                    child: HoverTestimonialCard(
+                      name: 'Emily Johnson',
+                      title: 'Marketing Director',
+                      testimonial:
+                          'The team at RamaDBK went above and beyond to help me find the perfect vehicle. Their knowledge and professionalism are unmatched in the industry.',
+                    ),
+                  ),
+                  const SizedBox(width: 20.0),
+                  Expanded(
+                    child: HoverTestimonialCard(
+                      name: 'Robert Chen',
+                      title: 'Tech Entrepreneur',
+                      testimonial:
+                          'As a repeat customer, I can confidently say that RamaDBK provides the best vehicle purchasing experience. Their selection of premium cars is impressive.',
+                    ),
+                  ),
+                ],
+              ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildTestimonialCard(String name, String title, String testimonial) {
-    return Container(
-      padding: EdgeInsets.all(30.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20.0,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.format_quote,
-            color: Colors.red,
-            size: 40.0,
-          ),
-          SizedBox(height: 20.0),
-          Text(
-            testimonial,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey[700],
-              height: 1.6,
-              fontSize: 16.0,
-              fontStyle: FontStyle.italic,
+/// A testimonial card widget that shows a hover effect on web/desktop.
+class HoverTestimonialCard extends StatefulWidget {
+  final String name;
+  final String title;
+  final String testimonial;
+
+  const HoverTestimonialCard({
+    Key? key,
+    required this.name,
+    required this.title,
+    required this.testimonial,
+  }) : super(key: key);
+
+  @override
+  _HoverTestimonialCardState createState() => _HoverTestimonialCardState();
+}
+
+class _HoverTestimonialCardState extends State<HoverTestimonialCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter:
+          (_) => setState(() {
+            _isHovered = true;
+          }),
+      onExit:
+          (_) => setState(() {
+            _isHovered = false;
+          }),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        transform:
+            _isHovered ? (Matrix4.identity()..scale(1.03)) : Matrix4.identity(),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(_isHovered ? 0.2 : 0.1),
+              blurRadius: _isHovered ? 25.0 : 20.0,
+              offset: Offset(0, _isHovered ? 8 : 5),
             ),
-          ),
-          SizedBox(height: 20.0),
-          Container(
-            width: 50.0,
-            height: 1.0,
-            color: Colors.grey[300],
-          ),
-          SizedBox(height: 20.0),
-          Text(
-            name,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0,
+          ],
+        ),
+        padding: const EdgeInsets.all(30.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.format_quote, color: Colors.red, size: 40.0),
+            const SizedBox(height: 20.0),
+            Text(
+              widget.testimonial,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey[700],
+                height: 1.6,
+                fontSize: 16.0,
+                fontStyle: FontStyle.italic,
+              ),
             ),
-          ),
-          SizedBox(height: 5.0),
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14.0,
+            const SizedBox(height: 20.0),
+            Container(width: 50.0, height: 1.0, color: Colors.red[300]),
+            const SizedBox(height: 20.0),
+            Text(
+              widget.name,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                color: Colors.red, // Updated: Name text now in red.
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 5.0),
+            Text(
+              widget.title,
+              style: TextStyle(color: Colors.red[600], fontSize: 14.0),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -13,57 +13,56 @@ class AboutSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final bool isMobile = screenSize.width < 768;
-    
+
     return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60.0,
-      ),
-      color: Colors.grey[100],
-      child: isMobile
-          ? Column(
-              children: [
-                // About Text
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: _buildAboutContent(),
-                ),
-                SizedBox(height: 30.0),
-                // About Image
-                Container(
-                  height: 300.0,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/car_02.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Row(
-              children: [
-                // About Text
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 60.0),
+      padding: const EdgeInsets.symmetric(vertical: 60.0),
+      color: Colors.white,
+      child:
+          isMobile
+              ? Column(
+                children: [
+                  // About Text
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: _buildAboutContent(),
                   ),
-                ),
-                
-                // About Image
-                Expanded(
-                  child: Container(
-                    height: 450.0,
-                    decoration: BoxDecoration(
+                  const SizedBox(height: 30.0),
+                  // About Image
+                  Container(
+                    height: 300.0,
+                    decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/images/car_02.jpg'),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              )
+              : Row(
+                children: [
+                  // About Text
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 60.0),
+                      child: _buildAboutContent(),
+                    ),
+                  ),
+
+                  // About Image
+                  Expanded(
+                    child: Container(
+                      height: 450.0,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/car_02.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
     );
   }
 
@@ -71,39 +70,36 @@ class AboutSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'ABOUT US',
           style: TextStyle(
             color: Colors.red,
             fontWeight: FontWeight.bold,
-            fontSize: 14.0,
+            fontSize: 36.0,
             letterSpacing: 2.0,
           ),
         ),
-        SizedBox(height: 10.0),
-        Text(
+        const SizedBox(height: 10.0),
+        const Text(
           'Premium Vehicle Dealership Since 1995',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 28.0,
+            fontSize: 20.0,
+            color: Color.fromARGB(255, 112, 110, 110),
           ),
         ),
-        SizedBox(height: 10.0),
-        Container(
-          width: 50.0,
-          height: 3.0,
-          color: Colors.red,
-        ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 10.0),
+        Container(width: 50.0, height: 3.0, color: Colors.red),
+        const SizedBox(height: 20.0),
         Text(
           'RamaDBK is a renowned name in the automotive industry, specializing in premium and luxury vehicles. With over 25 years of experience, we have established ourselves as leaders in providing exceptional vehicles and outstanding customer service.',
           style: TextStyle(
             fontSize: 16.0,
             height: 1.6,
-            color: Colors.grey[700],
+            color: const Color.fromRGBO(97, 97, 97, 1),
           ),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Row(
           children: [
             Expanded(
@@ -113,7 +109,7 @@ class AboutSection extends StatelessWidget {
                 'Hand-picked luxury vehicles',
               ),
             ),
-            SizedBox(width: 20.0),
+            const SizedBox(width: 20.0),
             Expanded(
               child: _buildAboutFeature(
                 Icons.check_circle,
@@ -123,7 +119,7 @@ class AboutSection extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Row(
           children: [
             Expanded(
@@ -133,7 +129,7 @@ class AboutSection extends StatelessWidget {
                 'Rigorous inspection process',
               ),
             ),
-            SizedBox(width: 20.0),
+            const SizedBox(width: 20.0),
             Expanded(
               child: _buildAboutFeature(
                 Icons.check_circle,
@@ -143,13 +139,13 @@ class AboutSection extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 30.0),
+        const SizedBox(height: 30.0),
         ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
             foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 30.0,
               vertical: 15.0,
             ),
@@ -157,11 +153,9 @@ class AboutSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(30.0),
             ),
           ),
-          child: Text(
+          child: const Text(
             'Learn More About Us',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -172,30 +166,25 @@ class AboutSection extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: Colors.red,
-          size: 20.0,
-        ),
-        SizedBox(width: 10.0),
+        Icon(icon, color: Colors.red, size: 20.0),
+        const SizedBox(width: 10.0),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Title in red color
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
+                  color: Colors.red,
                 ),
               ),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Text(
                 description,
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14.0,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14.0),
               ),
             ],
           ),
