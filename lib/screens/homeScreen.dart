@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:rama_dbk_crm/home_Components/service_section.dart';
-import '../home_Components/hero.dart';
-import '../home_Components/featured_vehicles.dart';
-import '../home_Components/about_section.dart';
-import '../home_Components/statistics_section.dart';
-import '../home_Components/testimonials_section.dart';
-import '../home_Components/cta_section.dart';
+import 'package:rama_dbk_crm/home_components/service_section.dart';
+import '../home_components/hero.dart';
+import '../home_components/featured_vehicles.dart';
+import '../home_components/about_section.dart';
+import '../home_components/statistics_section.dart';
+import '../home_components/testimonials_section.dart';
 
 /// HomeScreen for RamaDBK
 ///

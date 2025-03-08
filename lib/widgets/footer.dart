@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 /// Footer Component for RamaDBK Website
 ///
 /// A responsive footer that adapts to different screen sizes.
-/// Contains company information, navigation links, contact information,
-/// newsletter subscription, and social media links.
-///
+/// - Desktop/Tablet: Shows all columns (Company Info, Quick Links, Services, Contact, etc.)
+/// - Mobile: Shows **only** the Contact & Newsletter section and bottom copyright.
 /// Hover effects are added for desktop/web via `_HoverLink` and `_HoverIcon`.
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -19,12 +18,12 @@ class Footer extends StatelessWidget {
     return Container(
       color: const Color(0xFF1D1D1D),
       padding: EdgeInsets.symmetric(
-        vertical: 50.0,
-        horizontal: isMobile ? 20.0 : 50.0,
+        vertical: isMobile ? 30.0 : 50.0,
+        horizontal: isMobile ? 16.0 : 50.0,
       ),
       child:
           isMobile
-              ? _buildMobileFooter()
+              ? _buildMobileFooter(context)
               : isTablet
               ? _buildTabletFooter()
               : _buildDesktopFooter(),
@@ -42,13 +41,10 @@ class Footer extends StatelessWidget {
           children: [
             // Company Information
             Expanded(flex: 3, child: _buildCompanyInfo()),
-
             // Quick Links
             Expanded(flex: 2, child: _buildQuickLinks()),
-
             // Services
             Expanded(flex: 2, child: _buildServices()),
-
             // Contact & Newsletter
             Expanded(flex: 3, child: _buildContactNewsletter()),
           ],
@@ -103,29 +99,29 @@ class Footer extends StatelessWidget {
   }
 
   // -------------------------------------------------------
-  //  Mobile Layout
+  //  Mobile Layout (Show ONLY Contact, Newsletter, Bottom)
   // -------------------------------------------------------
-  Widget _buildMobileFooter() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildCompanyInfo(),
-        const SizedBox(height: 30),
-        _buildQuickLinks(),
-        const SizedBox(height: 30),
-        _buildServices(),
-        const SizedBox(height: 30),
-        _buildContactNewsletter(),
-        const SizedBox(height: 40),
-        _buildDivider(),
-        const SizedBox(height: 20),
-        _buildBottomSection(isMobile: true),
-      ],
+  Widget _buildMobileFooter(BuildContext context) {
+    // You can tweak the textScaleFactor if you want to shrink or enlarge text on mobile.
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaleFactor: 0.9),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Show ONLY the Contact & Newsletter section:
+          _buildContactNewsletter(),
+          const SizedBox(height: 20),
+          _buildDivider(),
+          const SizedBox(height: 10),
+          // Show bottom links & copyright
+          _buildBottomSection(isMobile: true),
+        ],
+      ),
     );
   }
 
   // -------------------------------------------------------
-  //  Company Info
+  //  Company Info (Desktop/Tablet only)
   // -------------------------------------------------------
   Widget _buildCompanyInfo() {
     return Column(
@@ -156,7 +152,6 @@ class Footer extends StatelessWidget {
               ),
         ),
         const SizedBox(height: 20),
-
         // "RamaDBK LTD\nJapanese Car Exporter"
         const Text(
           'RamaDBK LTD\nJapanese Car Exporter',
@@ -168,21 +163,19 @@ class Footer extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-
         const Text(
-          'Premium vehicle dealership offering a wide range of luxury '
-          'and performance vehicles with exceptional customer service.',
+          'Premium vehicle dealership offering a wide range of luxury and performance vehicles with exceptional customer service.',
           style: TextStyle(color: Colors.white70, height: 1.5),
         ),
         const SizedBox(height: 20),
-
+        // Social icons (desktop/tablet only)
         _buildSocialLinks(),
       ],
     );
   }
 
   // -------------------------------------------------------
-  //  Quick Links (+ Other Info)
+  //  Quick Links (+ Other Info) (Desktop/Tablet only)
   // -------------------------------------------------------
   Widget _buildQuickLinks() {
     return Column(
@@ -203,7 +196,6 @@ class Footer extends StatelessWidget {
         _buildFooterLink('Testimonials'),
         _buildFooterLink('Blog'),
         _buildFooterLink('Contact Us'),
-
         const SizedBox(height: 20),
         const Text(
           'Other Info',
@@ -225,7 +217,7 @@ class Footer extends StatelessWidget {
   }
 
   // -------------------------------------------------------
-  //  Our Services (+ Customer Services)
+  //  Our Services (+ Customer Services) (Desktop/Tablet only)
   // -------------------------------------------------------
   Widget _buildServices() {
     return Column(
@@ -246,7 +238,6 @@ class Footer extends StatelessWidget {
         _buildFooterLink('Vehicle Maintenance'),
         _buildFooterLink('Parts & Accessories'),
         _buildFooterLink('Trade-In Appraisal'),
-
         const SizedBox(height: 20),
         const Text(
           'Customer Services',
@@ -269,7 +260,7 @@ class Footer extends StatelessWidget {
   }
 
   // -------------------------------------------------------
-  //  Contact & Newsletter
+  //  Contact & Newsletter (Shown on ALL layouts)
   // -------------------------------------------------------
   Widget _buildContactNewsletter() {
     return Column(
@@ -295,7 +286,6 @@ class Footer extends StatelessWidget {
         _buildContactItem(Icons.email, 'sales@ramadbk.com'),
         _buildContactItem(Icons.web, 'www.RamaDBK.com'),
         _buildContactItem(Icons.phone_android, '+81-90-5580-6914'),
-
         const SizedBox(height: 25),
         const Text(
           'Newsletter',
@@ -315,10 +305,9 @@ class Footer extends StatelessWidget {
   //  Footer Link (with hover)
   // -------------------------------------------------------
   Widget _buildFooterLink(String text) {
-    // Instead of a simple InkWell, we use our new _HoverLink widget.
     return _HoverLink(
       text: text,
-      icon: Icons.arrow_right, // same icon you used before
+      icon: Icons.arrow_right,
       onTap: () {
         // TODO: Implement navigation
       },
@@ -396,7 +385,7 @@ class Footer extends StatelessWidget {
   }
 
   // -------------------------------------------------------
-  //  Social Links (with hover icons)
+  //  Social Links (Desktop/Tablet only)
   // -------------------------------------------------------
   Widget _buildSocialLinks() {
     return Row(
@@ -409,7 +398,6 @@ class Footer extends StatelessWidget {
         const SizedBox(width: 10),
         _buildSocialIcon(Icons.youtube_searched_for),
         const SizedBox(width: 10),
-        // e.g., DMCA protected
         _buildSocialIcon(Icons.security, tooltip: 'DMCA Protected'),
       ],
     );
@@ -433,7 +421,7 @@ class Footer extends StatelessWidget {
   }
 
   // -------------------------------------------------------
-  //  Bottom Section (Optional hover on links)
+  //  Bottom Section
   // -------------------------------------------------------
   Widget _buildBottomSection({bool isMobile = false}) {
     return isMobile
@@ -478,12 +466,11 @@ class Footer extends StatelessWidget {
   }
 
   Widget _buildBottomLink(String text) {
-    // Use the same hover link approach for these bottom links if you want.
     return Padding(
       padding: const EdgeInsets.only(left: 8),
       child: _HoverLink(
         text: text,
-        icon: null, // No arrow icon here
+        icon: null,
         hoverColor: Colors.white70,
         onTap: () {
           // TODO: Implement navigation

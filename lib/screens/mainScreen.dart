@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'homeScreen.dart';
+import 'aboutScreen.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
-import 'homeScreen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -12,21 +13,23 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Center(child: Text('About Screen')),
+    const Center(child: Text('Stock List Screen')),
+    const Center(child: Text('Spare Parts Screen')),
     const Center(child: Text('Services Screen')),
-    const Center(child: Text('Contact Screen')),
-    const Center(child: Text('Login Screen')),
+    const AboutScreen(), // Index 4 for About Us
+    const Center(child: Text('Contact Screen')), // Index 5 for Contacts
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          // Static navbar that persists across screens
+          // NavBar persists across all screens
           NavBar(
             selectedIndex: _currentIndex,
             onItemSelected: (index) {
@@ -35,14 +38,14 @@ class _MainScreenState extends State<MainScreen> {
               });
             },
           ),
-          // Content area that changes based on navigation
+          // Screen content area + footer
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Current screen content
+                  // Show the selected screen based on _currentIndex
                   _screens[_currentIndex],
-                  // Static footer that persists across screens
+                  // Footer persists across all screens
                   const Footer(),
                 ],
               ),

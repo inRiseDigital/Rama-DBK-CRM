@@ -110,11 +110,11 @@ class HoverTestimonialCard extends StatefulWidget {
   final String testimonial;
 
   const HoverTestimonialCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.title,
     required this.testimonial,
-  }) : super(key: key);
+  });
 
   @override
   _HoverTestimonialCardState createState() => _HoverTestimonialCardState();
