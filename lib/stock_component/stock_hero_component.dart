@@ -12,18 +12,18 @@ class StockHeroComponent extends StatelessWidget {
       children: [
         // Background Image
         Container(
-          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 0.75,
+          height: isMobile ? screenSize.height * 0.9 : screenSize.height * 1,
           width: double.infinity,
           decoration: BoxDecoration(
             image: const DecorationImage(
-              image: AssetImage('assets/images/car_02.jpg'),
+              image: AssetImage('assets/images/vehicle_group.png'),
               fit: BoxFit.cover,
             ),
           ),
         ),
         // Dark Overlay for readability
         Container(
-          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 0.75,
+          height: isMobile ? screenSize.height * 0.9 : screenSize.height * 1,
           width: double.infinity,
           color: Colors.black.withOpacity(0.5),
         ),
