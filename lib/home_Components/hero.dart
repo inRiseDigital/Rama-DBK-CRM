@@ -26,7 +26,7 @@ class _HeroSectionState extends State<HeroSection>
       'title': 'Exclusive Deals',
       'description':
           'Limited time offers on select models. Schedule a test drive today.',
-      'image': 'assets/images/car_03.png',
+      'image': 'assets/images/car_yard.png',
       'buttons': [
         {
           'text': 'Explore Vehicles',
@@ -45,7 +45,7 @@ class _HeroSectionState extends State<HeroSection>
       'title': 'Premium Selection',
       'description':
           'Discover our latest collection of luxury vehicles. Unmatched quality and performance.',
-      'image': 'assets/images/car_01.png',
+      'image': 'assets/images/trucks.png',
       'buttons': [
         {
           'text': 'View Collection',
@@ -64,7 +64,7 @@ class _HeroSectionState extends State<HeroSection>
       'title': 'Excellence Guaranteed',
       'description':
           'Experience our award-winning customer service and after-sales support.',
-      'image': 'assets/images/car_02.jpg',
+      'image': 'assets/images/vehicle_group.png',
       'buttons': [
         {
           'text': 'Our Services',
