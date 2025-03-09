@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rama_dbk_crm/screens/stockScreen.dart';
 import 'homeScreen.dart';
 import 'aboutScreen.dart';
 import '../widgets/navbar.dart';
@@ -16,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const Center(child: Text('Stock List Screen')),
+    const StockScreen(),
     const Center(child: Text('Spare Parts Screen')),
     const Center(child: Text('Services Screen')),
     const AboutScreen(), // Index 4 for About Us
