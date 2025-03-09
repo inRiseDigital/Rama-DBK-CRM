@@ -117,7 +117,7 @@ class _HeroSectionState extends State<HeroSection>
     final bool isMobile = screenSize.width < 768;
 
     return SizedBox(
-      height: isMobile ? screenSize.height * 0.8 : screenSize.height * 0.9,
+      height: isMobile ? screenSize.height * 1 : screenSize.height * 1,
       width: double.infinity,
       child: Stack(
         children: [
