@@ -171,7 +171,7 @@ class VehicleStock extends StatelessWidget {
                   for (final category in _categories) ...[
                     _buildCategorySection(
                       context,
-                      category['title'] as String? ?? 'FEATURED',
+                      '', // Pass empty string so "Featured Vehicles" text doesn't appear
                       category['vehicles'] as List<VehicleData>,
                       isMobile,
                       primaryColor,
@@ -199,35 +199,37 @@ class VehicleStock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Category header
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: primaryColor,
-                    borderRadius: BorderRadius.circular(2),
+        // Category header row:
+        // If title is empty, this text won't appear
+        if (title.isNotEmpty)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: secondaryColor,
-                    fontWeight: FontWeight.w800,
-                    fontSize: isMobile ? 16 : 20,
-                    letterSpacing: 0.5,
+                  const SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w800,
+                      fontSize: isMobile ? 16 : 20,
+                      letterSpacing: 0.5,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
+                ],
+              ),
+            ],
+          ),
+        if (title.isNotEmpty) const SizedBox(height: 20),
 
         // Vehicle grid
         GridView.builder(
