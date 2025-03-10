@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 /// Services Section Component
 ///
 /// Displays the company's services in a responsive card layout.
-/// Each service includes an icon, topic, title, description, and a call-to-action link.
+/// Each service includes an icon, topic, title, description,
+/// and a call-to-action link.
 class ServicesSection extends StatelessWidget {
   const ServicesSection({super.key});
 
@@ -94,7 +95,7 @@ class ServicesSection extends StatelessWidget {
   }
 }
 
-/// A service card widget that adds a hover effect on web/desktop.
+/// A service card widget with hover effect (for web/desktop).
 class HoverServiceCard extends StatefulWidget {
   final IconData icon;
   final String topic;
@@ -120,8 +121,7 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
 
   @override
   Widget build(BuildContext context) {
-    // Force card width to be the same across all devices:
-    // If 90% of the screen width is less than 300, use that; otherwise, use 300.
+    // Calculate a consistent card width.
     final double cardWidth =
         MediaQuery.of(context).size.width * 0.9 < 300.0
             ? MediaQuery.of(context).size.width * 0.9
@@ -136,6 +136,9 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
         transform:
             _isHovered ? (Matrix4.identity()..scale(1.03)) : Matrix4.identity(),
         width: cardWidth,
+        // Force every card to the same height.
+        // If content exceeds 320, it may overflow or clip.
+        constraints: const BoxConstraints(minHeight: 320, maxHeight: 350),
         padding: const EdgeInsets.all(30.0),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -151,6 +154,7 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Icon in a circular container
             Container(
               width: 70.0,
               height: 70.0,
@@ -161,7 +165,7 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
               child: Icon(widget.icon, color: Colors.red, size: 30.0),
             ),
             const SizedBox(height: 20.0),
-            // Topic Text
+            // Topic (e.g., "Automotive", "Financing")
             Text(
               widget.topic,
               style: TextStyle(
@@ -172,6 +176,7 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
               ),
             ),
             const SizedBox(height: 10.0),
+            // Title (e.g., "Vehicle Sales")
             Text(
               widget.title,
               style: const TextStyle(
@@ -180,15 +185,19 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
               ),
             ),
             const SizedBox(height: 10.0),
-            Text(
-              widget.description,
-              style: TextStyle(
-                color: Colors.grey[600],
-                height: 1.5,
-                fontSize: 16.0,
+            // Description
+            Expanded(
+              child: Text(
+                widget.description,
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  height: 1.5,
+                  fontSize: 16.0,
+                ),
               ),
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 10.0),
+            // "Learn More" button
             TextButton(
               onPressed: () {},
               style: TextButton.styleFrom(

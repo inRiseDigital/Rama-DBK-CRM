@@ -52,6 +52,7 @@ class _HeroSectionState extends State<HeroSection>
   }
 
   void _startAutoSlide() {
+    // Automatically cycle through background images every 5 seconds
     _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
       if (_currentIndex < _backgroundImages.length - 1) {
         _currentIndex++;
@@ -78,32 +79,32 @@ class _HeroSectionState extends State<HeroSection>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    // "Mobile" breakpoint for tablets or smaller
     final bool isMobile = size.width < 768;
+    // "Small phone" breakpoint for narrower devices than ~iPhone 8 (375px)
+    final bool isSmallPhone = size.width < 375;
 
     return SizedBox(
+      // Use up to 90% of the screen height
       height: size.height * 0.9,
       width: double.infinity,
       child: Stack(
         children: [
-          // PageView with scaling and fading effect for a smooth, modern transition
+          // 1) PageView with a smooth scale & fade animation
           PageView.builder(
             controller: _pageController,
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
+            onPageChanged: (index) => setState(() => _currentIndex = index),
             itemCount: _backgroundImages.length,
             itemBuilder: (context, index) {
               return AnimatedBuilder(
                 animation: _pageController,
                 builder: (context, child) {
-                  double value = 0;
+                  double value = 1.0;
                   if (_pageController.position.haveDimensions) {
+                    // Distances the current page from 'index'
                     value = _pageController.page! - index;
+                    // Slightly scale & fade out non-active pages
                     value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
-                  } else {
-                    value = index == 0 ? 1.0 : 0.7;
                   }
                   return Opacity(
                     opacity: value,
@@ -128,63 +129,99 @@ class _HeroSectionState extends State<HeroSection>
               );
             },
           ),
-          // Fixed content overlay
+
+          // 2) Main hero content overlay
           Positioned.fill(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 30.0 : 80.0),
+              // Extra-little horizontal padding on small phones
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallPhone ? 16.0 : (isMobile ? 30.0 : 80.0),
+              ),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Headline
                     Text(
                       _fixedContent['title'],
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: isMobile ? 48 : 72,
+                        fontSize: isSmallPhone ? 32 : (isMobile ? 48 : 72),
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 0.5,
                         height: 1.1,
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: isMobile ? 24 : 32),
+                    SizedBox(height: isSmallPhone ? 16 : (isMobile ? 24 : 32)),
+
+                    // Description
                     ConstrainedBox(
                       constraints: BoxConstraints(
                         maxWidth: isMobile ? double.infinity : 700,
                       ),
                       child: Text(
                         _fixedContent['description'],
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: isMobile ? 16 : 18,
+                          fontSize: isSmallPhone ? 14 : (isMobile ? 16 : 18),
                           color: Colors.white.withOpacity(0.9),
                           height: 1.5,
                           fontWeight: FontWeight.w400,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
-                    SizedBox(height: isMobile ? 40 : 56),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        _fixedContent['buttons'].length,
-                        (index) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: _buildActionButton(
-                            _fixedContent['buttons'][index]['text'],
-                            _fixedContent['buttons'][index]['color'],
-                            _fixedContent['buttons'][index]['icon'],
-                            isMobile,
+                    SizedBox(height: isSmallPhone ? 24 : (isMobile ? 40 : 56)),
+
+                    // 3) Buttons
+                    if (isSmallPhone)
+                      // If the screen is really narrow, stack the buttons vertically
+                      Column(
+                        children: [
+                          _buildActionButton(
+                            text: _fixedContent['buttons'][0]['text'],
+                            color: _fixedContent['buttons'][0]['color'],
+                            icon: _fixedContent['buttons'][0]['icon'],
+                            isMobile: isMobile,
+                            isSmallPhone: isSmallPhone,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildActionButton(
+                            text: _fixedContent['buttons'][1]['text'],
+                            color: _fixedContent['buttons'][1]['color'],
+                            icon: _fixedContent['buttons'][1]['icon'],
+                            isMobile: isMobile,
+                            isSmallPhone: isSmallPhone,
+                          ),
+                        ],
+                      )
+                    else
+                      // Normal horizontal layout on wider phones
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          _fixedContent['buttons'].length,
+                          (index) => Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: _buildActionButton(
+                              text: _fixedContent['buttons'][index]['text'],
+                              color: _fixedContent['buttons'][index]['color'],
+                              icon: _fixedContent['buttons'][index]['icon'],
+                              isMobile: isMobile,
+                              isSmallPhone: isSmallPhone,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ),
           ),
-          // Indicators
+
+          // 4) Indicators (dots)
           Positioned(
             bottom: 30,
             left: 0,
@@ -197,7 +234,8 @@ class _HeroSectionState extends State<HeroSection>
               ),
             ),
           ),
-          // Down arrow icon
+
+          // 5) Down arrow icon
           Positioned(
             bottom: 10,
             left: 0,
@@ -215,12 +253,14 @@ class _HeroSectionState extends State<HeroSection>
     );
   }
 
-  Widget _buildActionButton(
-    String text,
-    Color color,
-    IconData icon,
-    bool isMobile,
-  ) {
+  /// Action Button
+  Widget _buildActionButton({
+    required String text,
+    required Color color,
+    required IconData icon,
+    required bool isMobile,
+    required bool isSmallPhone,
+  }) {
     return StatefulBuilder(
       builder: (context, setState) {
         bool isHovered = false;
@@ -236,21 +276,19 @@ class _HeroSectionState extends State<HeroSection>
             child: ElevatedButton(
               onPressed: () {},
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>((
-                  states,
-                ) {
-                  if (states.contains(MaterialState.hovered))
-                    return color.withOpacity(0.8);
-                  return color;
-                }),
-                elevation: MaterialStateProperty.resolveWith<double>((states) {
-                  if (states.contains(MaterialState.hovered)) return 6;
-                  return 3;
-                }),
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (states) =>
+                      states.contains(MaterialState.hovered)
+                          ? color.withOpacity(0.8)
+                          : color,
+                ),
+                elevation: MaterialStateProperty.resolveWith<double>(
+                  (states) => states.contains(MaterialState.hovered) ? 6 : 3,
+                ),
                 padding: MaterialStateProperty.all(
                   EdgeInsets.symmetric(
-                    horizontal: isMobile ? 20 : 30,
-                    vertical: isMobile ? 14 : 18,
+                    horizontal: isSmallPhone ? 16 : (isMobile ? 20 : 30),
+                    vertical: isSmallPhone ? 10 : (isMobile ? 14 : 18),
                   ),
                 ),
                 shape: MaterialStateProperty.all(
@@ -267,7 +305,7 @@ class _HeroSectionState extends State<HeroSection>
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
-                      fontSize: isMobile ? 14 : 16,
+                      fontSize: isSmallPhone ? 12 : (isMobile ? 14 : 16),
                       letterSpacing: 0.5,
                     ),
                     child: Text(text),
@@ -281,7 +319,7 @@ class _HeroSectionState extends State<HeroSection>
                             : Matrix4.identity(),
                     child: Icon(
                       icon,
-                      size: isMobile ? 16 : 18,
+                      size: isSmallPhone ? 14 : (isMobile ? 16 : 18),
                       color: Colors.white,
                     ),
                   ),
@@ -294,6 +332,7 @@ class _HeroSectionState extends State<HeroSection>
     );
   }
 
+  /// Page indicator widget
   Widget _buildIndicator(bool isActive) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
