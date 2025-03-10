@@ -225,25 +225,6 @@ class VehicleStock extends StatelessWidget {
                 ),
               ],
             ),
-            TextButton(
-              onPressed: () {
-                // Handle "View All" action
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: primaryColor,
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Text('View All'),
-                  const SizedBox(width: 4),
-                  Icon(Icons.arrow_forward, size: 16, color: primaryColor),
-                ],
-              ),
-            ),
           ],
         ),
         const SizedBox(height: 20),
