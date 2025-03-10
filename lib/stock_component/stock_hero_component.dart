@@ -63,38 +63,4 @@ class StockHeroComponent extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildActionButton(
-    String text,
-    Color color,
-    IconData icon,
-    VoidCallback onPressed,
-  ) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: color == Colors.red ? Colors.white : Colors.black87,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-          side:
-              color == Colors.red
-                  ? BorderSide.none
-                  : BorderSide(color: Colors.white.withOpacity(0.5)),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            text,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
-          ),
-          const SizedBox(width: 8),
-          Icon(icon, size: 18.0),
-        ],
-      ),
-    );
-  }
 }
