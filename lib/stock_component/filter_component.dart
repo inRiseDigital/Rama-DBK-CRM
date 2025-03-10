@@ -179,7 +179,7 @@ class _FilterComponentState extends State<FilterComponent> {
               child: Center(
                 child: _buildButton(
                   "Search",
-                  const Color(0xFF3E54AC),
+                  Colors.red,
                   Colors.white,
                   icon: Icons.search,
                   onPressed: _searchResults,

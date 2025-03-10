@@ -438,7 +438,10 @@ class _VehicleCardState extends State<VehicleCard> {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 10),
                             ),
-                            child: const Text('Details'),
+                            child: const Text(
+                              'Details',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -560,7 +563,7 @@ class _VehicleCardState extends State<VehicleCard> {
                 const Text(
                   'Additional specifications and features would be displayed here with detailed information about engine, transmission, mileage, and other relevant details about this vehicle.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.black87, height: 1.5),
+                  style: TextStyle(color: Colors.white, height: 1.5),
                 ),
                 const SizedBox(height: 20),
 
