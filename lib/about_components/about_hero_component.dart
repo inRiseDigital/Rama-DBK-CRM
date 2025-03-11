@@ -11,91 +11,111 @@ class AboutHeroComponent extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     final bool isMobile = screenSize.width < 768;
 
-    return Stack(
-      children: [
-        // Background Image
-        Container(
-          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 1.0,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            image: const DecorationImage(
-              image: AssetImage('assets/images/car_02.jpg'),
-              fit: BoxFit.cover,
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 24 : 64,
+        vertical: isMobile ? 48 : 64,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.red.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              'About RamaDBK',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
             ),
           ),
-        ),
-        // Dark Overlay for readability
-        Container(
-          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 1.0,
-          width: double.infinity,
-          color: Colors.black.withOpacity(0.5),
-        ),
-        // Content
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 20.0 : 80.0,
-            vertical: isMobile ? 40.0 : 100.0,
+          const SizedBox(height: 32),
+          Text(
+            'Leading Japanese\nVehicle Exporter Since 1988',
+            style: TextStyle(
+              fontSize: isMobile ? 32 : 56,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              height: 1.1,
+              letterSpacing: -0.5,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: isMobile ? 12.0 : 20.0),
-              Text(
-                'Driven by Excellence, Trusted Worldwide',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: isMobile ? 34.0 : 50.0,
-                  letterSpacing: 0.5,
-                  height: 1.1,
-                ),
+          const SizedBox(height: 24),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: isMobile ? double.infinity : 700,
+            ),
+            child: Text(
+              'With over three decades of excellence, RamaDBK has established itself as a premier exporter of quality Japanese vehicles worldwide. Our commitment to customer satisfaction and global reach makes us your trusted partner in automotive excellence.',
+              style: TextStyle(
+                fontSize: isMobile ? 16 : 18,
+                color: Colors.white.withOpacity(0.7),
+                height: 1.6,
               ),
-              SizedBox(height: isMobile ? 16.0 : 24.0),
-              Text(
-                'RamaDBK is a premier vehicle exporter, bringing high-quality automobiles to customers worldwide with trust and efficiency.',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
-                  fontSize: isMobile ? 16.0 : 18.0,
-                  height: 1.4,
-                ),
+            ),
+          ),
+          const SizedBox(height: 40),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              _buildActionButton('Contact Us', true, Icons.mail_outline, () {
+                // Add contact navigation logic
+              }),
+              _buildActionButton(
+                'Our Services',
+                false,
+                Icons.arrow_forward,
+                () {
+                  // Add services navigation logic
+                },
               ),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildActionButton(
     String text,
-    Color color,
+    bool isPrimary,
     IconData icon,
     VoidCallback onPressed,
   ) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: color == Colors.red ? Colors.white : Colors.black87,
+        backgroundColor: isPrimary ? Colors.red : Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
-          side:
-              color == Colors.red
-                  ? BorderSide.none
-                  : BorderSide(color: Colors.white.withOpacity(0.5)),
+          side: isPrimary
+              ? BorderSide.none
+              : BorderSide(color: Colors.white.withOpacity(0.3), width: 1),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             text,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
           ),
           const SizedBox(width: 8),
-          Icon(icon, size: 18.0),
+          Icon(icon, size: 18),
         ],
       ),
     );

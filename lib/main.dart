@@ -14,19 +14,36 @@ class MyApp extends StatelessWidget {
       title: 'Rama CRM',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: const Color(0xFFFF2D55), // Bright red
+        primaryColor: const Color(0xFFFF2D55),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFFF2D55),
-          brightness: Brightness.dark, // Dark theme to match background
+          brightness: Brightness.light,
         ),
         fontFamily: 'Roboto',
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.transparent,
-        // Text theme for better readability on dark background
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
         textTheme: const TextTheme(
-          bodyLarge: TextStyle(color: Colors.white),
-          bodyMedium: TextStyle(color: Colors.white),
-          titleLarge: TextStyle(color: Colors.white),
+          displayLarge: TextStyle(
+            fontSize: 48,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+          displayMedium: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+          titleLarge: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+          bodyLarge: TextStyle(fontSize: 18, height: 1.5),
+          bodyMedium: TextStyle(fontSize: 16, height: 1.5),
         ),
       ),
       home: const MainScreen(),

@@ -60,13 +60,45 @@ class _StockScreenState extends State<StockScreen> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const StockHeroComponent(),
-          // 🔍 Filter Section
-          FilterComponent(onFilterChanged: _handleFilterChange),
-          const SizedBox(height: 20),
-
-          VehicleStock(filters: _currentFilters),
+          Container(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const StockHeroComponent(),
+                const SizedBox(height: 64),
+                const Center(
+                  child: Text(
+                    'Vehicle Stock',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2D3748),
+                      letterSpacing: -1,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Center(
+                  child: Text(
+                    'Browse our extensive collection of quality vehicles. Use our advanced filters to find the perfect match for your needs.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Color(0xFF718096),
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 48),
+                FilterComponent(onFilterChanged: _handleFilterChange),
+                const SizedBox(height: 32),
+                VehicleStock(filters: _currentFilters),
+              ],
+            ),
+          ),
         ],
       ),
     );

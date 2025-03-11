@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
 
 /// Footer Component for RamaDBK Website
 ///
@@ -11,326 +15,193 @@ class Footer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final bool isMobile = screenSize.width < 768;
-    final bool isTablet = screenSize.width >= 768 && screenSize.width < 1200;
-
     return Container(
-      color: const Color(0xFF1D1D1D),
-      padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 30.0 : 50.0,
-        horizontal: isMobile ? 16.0 : 50.0,
-      ),
-      child:
-          isMobile
-              ? _buildMobileFooter(context)
-              : isTablet
-              ? _buildTabletFooter()
-              : _buildDesktopFooter(),
-    );
-  }
-
-  // -------------------------------------------------------
-  //  Desktop Layout
-  // -------------------------------------------------------
-  Widget _buildDesktopFooter() {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Company Information
-            Expanded(flex: 3, child: _buildCompanyInfo()),
-            // Quick Links
-            Expanded(flex: 2, child: _buildQuickLinks()),
-            // Services
-            Expanded(flex: 2, child: _buildServices()),
-            // Contact & Newsletter
-            Expanded(flex: 3, child: _buildContactNewsletter()),
-          ],
-        ),
-        const SizedBox(height: 40),
-        _buildDivider(),
-        const SizedBox(height: 20),
-        _buildBottomSection(),
-      ],
-    );
-  }
-
-  // -------------------------------------------------------
-  //  Tablet Layout
-  // -------------------------------------------------------
-  Widget _buildTabletFooter() {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Company Info and Quick Links
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCompanyInfo(),
-                  const SizedBox(height: 30),
-                  _buildQuickLinks(),
-                ],
-              ),
-            ),
-            // Services and Contact
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildServices(),
-                  const SizedBox(height: 30),
-                  _buildContactNewsletter(),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 40),
-        _buildDivider(),
-        const SizedBox(height: 20),
-        _buildBottomSection(),
-      ],
-    );
-  }
-
-  // -------------------------------------------------------
-  //  Mobile Layout (Show ONLY Contact, Newsletter, Bottom)
-  // -------------------------------------------------------
-  Widget _buildMobileFooter(BuildContext context) {
-    // You can tweak the textScaleFactor if you want to shrink or enlarge text on mobile.
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaleFactor: 0.9),
+      color: Colors.black,
+      padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Show ONLY the Contact & Newsletter section:
-          _buildContactNewsletter(),
-          const SizedBox(height: 20),
-          _buildDivider(),
-          const SizedBox(height: 10),
-          // Show bottom links & copyright
-          _buildBottomSection(isMobile: true),
+          _buildFooterContent(context),
+          const SizedBox(height: 30),
+          _buildBottomBar(),
         ],
       ),
     );
   }
 
-  // -------------------------------------------------------
-  //  Company Info (Desktop/Tablet only)
-  // -------------------------------------------------------
-  Widget _buildCompanyInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildFooterContent(BuildContext context) {
+    return Wrap(
+      spacing: 30,
+      runSpacing: 30,
       children: [
-        Image.asset(
-          'assets/images/Rama_logo.png',
-          height: 50,
-          // Fallback if image doesn't exist
-          errorBuilder:
-              (context, error, stackTrace) => Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: Text(
-                    'R',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+        _buildAboutSection(context),
+        _buildServicesSection(context),
+        _buildContactSection(context),
+        _buildNewsletterSection(),
+      ],
+    );
+  }
+
+  Widget _buildAboutSection(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(
+            'assets/images/Rama_logo.png',
+            height: 50,
+            // Fallback if image doesn't exist
+            errorBuilder: (context, error, stackTrace) => Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Text(
+                  'R',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
                 ),
               ),
-        ),
-        const SizedBox(height: 20),
-        // "RamaDBK LTD\nJapanese Car Exporter"
-        const Text(
-          'RamaDBK LTD\nJapanese Car Exporter',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            height: 1.4,
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'Premium vehicle dealership offering a wide range of luxury and performance vehicles with exceptional customer service.',
-          style: TextStyle(color: Colors.white70, height: 1.5),
-        ),
-        const SizedBox(height: 20),
-        // Social icons (desktop/tablet only)
-        _buildSocialLinks(),
-      ],
+          const SizedBox(height: 20),
+          // "RamaDBK LTD\nJapanese Car Exporter"
+          const Text(
+            'RamaDBK LTD\nJapanese Car Exporter',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Premium vehicle dealership offering a wide range of luxury and performance vehicles with exceptional customer service.',
+            style: TextStyle(color: Colors.white70, height: 1.5),
+          ),
+          const SizedBox(height: 20),
+          // Social icons (desktop/tablet only)
+          _buildSocialLinks(),
+        ],
+      ),
     );
   }
 
-  // -------------------------------------------------------
-  //  Quick Links (+ Other Info) (Desktop/Tablet only)
-  // -------------------------------------------------------
-  Widget _buildQuickLinks() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quick Links',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+  Widget _buildServicesSection(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Our Services',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 15),
-        _buildFooterLink('Home'),
-        _buildFooterLink('About Us'),
-        _buildFooterLink('Our Fleet'),
-        _buildFooterLink('Testimonials'),
-        _buildFooterLink('Blog'),
-        _buildFooterLink('Contact Us'),
-        const SizedBox(height: 20),
-        const Text(
-          'Other Info',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        _buildFooterLink('Shipping Info'),
-        _buildFooterLink('Route to RamaDBK'),
-        _buildFooterLink('OCD/Meter Check Service'),
-        _buildFooterLink('Why Japanese Used Cars'),
-        _buildFooterLink('Our Bank Details'),
-        _buildFooterLink('Latest News'),
-      ],
+          const SizedBox(height: 15),
+          _buildFooterLink(context, 'New Vehicles'),
+          _buildFooterLink(context, 'Pre-Owned Vehicles'),
+          _buildFooterLink(context, 'Financing Options'),
+          _buildFooterLink(context, 'Vehicle Maintenance'),
+          _buildFooterLink(context, 'Parts & Accessories'),
+          _buildFooterLink(context, 'Trade-In Appraisal'),
+        ],
+      ),
     );
   }
 
-  // -------------------------------------------------------
-  //  Our Services (+ Customer Services) (Desktop/Tablet only)
-  // -------------------------------------------------------
-  Widget _buildServices() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Our Services',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+  Widget _buildContactSection(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Contact Info',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 15),
-        _buildFooterLink('New Vehicles'),
-        _buildFooterLink('Pre-Owned Vehicles'),
-        _buildFooterLink('Financing Options'),
-        _buildFooterLink('Vehicle Maintenance'),
-        _buildFooterLink('Parts & Accessories'),
-        _buildFooterLink('Trade-In Appraisal'),
-        const SizedBox(height: 20),
-        const Text(
-          'Customer Services',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        _buildFooterLink('Search for a car'),
-        _buildFooterLink('After Sales Guarantee'),
-        _buildFooterLink('Car Insurance'),
-        _buildFooterLink('Payment Security'),
-        _buildFooterLink('Sales Team'),
-        _buildFooterLink('Import Regulations'),
-        _buildFooterLink('Request Call Back'),
-      ],
+          const SizedBox(height: 15),
+          _buildFooterLink(context, 'Search for a car'),
+          _buildFooterLink(context, 'After Sales Guarantee'),
+          _buildFooterLink(context, 'Car Insurance'),
+          _buildFooterLink(context, 'Payment Security'),
+          _buildFooterLink(context, 'Sales Team'),
+          _buildFooterLink(context, 'Import Regulations'),
+          _buildFooterLink(context, 'Request Call Back'),
+        ],
+      ),
     );
   }
 
-  // -------------------------------------------------------
-  //  Contact & Newsletter (Shown on ALL layouts)
-  // -------------------------------------------------------
-  Widget _buildContactNewsletter() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Contact Us',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+  Widget _buildNewsletterSection() {
+    return SizedBox(
+      width: 300,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Newsletter',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 15),
-        _buildContactItem(
-          Icons.location_on,
-          '201 Rama HQ Building, 2-1-17 Shinkoyasu,\n'
-          'Kanagawa-ku, Yokohama, Japan\n'
-          'Post Code 221-0013',
-        ),
-        _buildContactItem(Icons.phone, '+81-45-402-6117'),
-        _buildContactItem(Icons.fax_outlined, '+81-45-402-0689'),
-        _buildContactItem(Icons.email, 'sales@ramadbk.com'),
-        _buildContactItem(Icons.web, 'www.RamaDBK.com'),
-        _buildContactItem(Icons.phone_android, '+81-90-5580-6914'),
-        const SizedBox(height: 25),
-        const Text(
-          'Newsletter',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+          const SizedBox(height: 15),
+          const Text(
+            'Subscribe to receive updates on new arrivals and special offers',
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
-        ),
-        const SizedBox(height: 15),
-        _buildNewsletterSignup(),
-      ],
+          const SizedBox(height: 15),
+          _NewsletterForm(),
+        ],
+      ),
     );
   }
 
   // -------------------------------------------------------
   //  Footer Link (with hover)
   // -------------------------------------------------------
-  Widget _buildFooterLink(String text) {
+  Widget _buildFooterLink(BuildContext context, String text) {
+    String route = _getRouteFromText(text);
     return _HoverLink(
       text: text,
       icon: Icons.arrow_right,
       onTap: () {
-        // TODO: Implement navigation
+        GoRouter.of(context).go(route);
       },
     );
   }
 
-  Widget _buildContactItem(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: Colors.red, size: 16),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-          ),
-        ],
-      ),
-    );
+  String _getRouteFromText(String text) {
+    switch (text.toLowerCase()) {
+      case 'home':
+        return '/';
+      case 'about us':
+        return '/about';
+      case 'services':
+        return '/services';
+      case 'spare parts':
+        return '/spare-parts';
+      case 'contact us':
+        return '/contact';
+      default:
+        return '/';
+    }
   }
 
   Widget _buildNewsletterSignup() {
@@ -389,80 +260,76 @@ class Footer extends StatelessWidget {
   // -------------------------------------------------------
   Widget _buildSocialLinks() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        _buildSocialIcon(Icons.facebook),
+        _HoverIcon(
+          icon: Icons.facebook,
+          tooltip: 'Follow us on Facebook',
+          onPressed: () => _launchSocialMedia('https://facebook.com/ramadbk'),
+        ),
         const SizedBox(width: 10),
-        _buildSocialIcon(Icons.phone_android),
+        _HoverIcon(
+          icon: Icons.telegram,
+          tooltip: 'Join our Telegram Channel',
+          onPressed: () => _launchSocialMedia('https://t.me/ramadbk'),
+        ),
         const SizedBox(width: 10),
-        _buildSocialIcon(Icons.camera_alt),
+        _HoverIcon(
+          icon: Icons.message,
+          tooltip: 'Contact us on WhatsApp',
+          onPressed: () => _launchSocialMedia('https://wa.me/+81904025117'),
+        ),
         const SizedBox(width: 10),
-        _buildSocialIcon(Icons.youtube_searched_for),
+        _HoverIcon(
+          icon: Icons.video_library,
+          tooltip: 'Subscribe to our YouTube Channel',
+          onPressed: () => _launchSocialMedia('https://youtube.com/ramadbk'),
+        ),
         const SizedBox(width: 10),
-        _buildSocialIcon(Icons.security, tooltip: 'DMCA Protected'),
+        _HoverIcon(
+          icon: Icons.language,
+          tooltip: 'Visit our Website',
+          onPressed: () => _launchSocialMedia('https://ramadbk.com'),
+        ),
       ],
     );
   }
 
-  Widget _buildSocialIcon(IconData icon, {String? tooltip}) {
-    return _HoverIcon(
-      icon: icon,
-      tooltip: tooltip,
-      onPressed: () {
-        // TODO: Implement social link action
-      },
-    );
-  }
-
-  // -------------------------------------------------------
-  //  Divider
-  // -------------------------------------------------------
-  Widget _buildDivider() {
-    return Container(height: 1, color: Colors.white12);
+  Future<void> _launchSocialMedia(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      debugPrint('Error launching URL: $e');
+    }
   }
 
   // -------------------------------------------------------
   //  Bottom Section
   // -------------------------------------------------------
-  Widget _buildBottomSection({bool isMobile = false}) {
-    return isMobile
-        ? Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+  Widget _buildBottomBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          '© 2025 RamaDBK. All Rights Reserved.',
+          style: TextStyle(color: Colors.white54, fontSize: 14),
+        ),
+        Row(
           children: [
-            const Text(
-              '© 2025 RamaDBK. All Rights Reserved.',
-              style: TextStyle(color: Colors.white54, fontSize: 14),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildBottomLink('Privacy Policy'),
-                _buildBottomDot(),
-                _buildBottomLink('Terms of Service'),
-                _buildBottomDot(),
-                _buildBottomLink('Sitemap'),
-              ],
-            ),
+            _buildBottomLink('Privacy Policy'),
+            _buildBottomDot(),
+            _buildBottomLink('Terms of Service'),
+            _buildBottomDot(),
+            _buildBottomLink('Sitemap'),
           ],
-        )
-        : Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              '© 2025 RamaDBK. All Rights Reserved.',
-              style: TextStyle(color: Colors.white54, fontSize: 14),
-            ),
-            Row(
-              children: [
-                _buildBottomLink('Privacy Policy'),
-                _buildBottomDot(),
-                _buildBottomLink('Terms of Service'),
-                _buildBottomDot(),
-                _buildBottomLink('Sitemap'),
-              ],
-            ),
-          ],
-        );
+        ),
+      ],
+    );
   }
 
   Widget _buildBottomLink(String text) {
@@ -546,10 +413,9 @@ class _HoverLinkState extends State<_HoverLink> {
                 style: TextStyle(
                   color: _isHovering ? widget.hoverColor : Colors.white70,
                   fontSize: 14,
-                  decoration:
-                      _isHovering
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
+                  decoration: _isHovering
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
                 ),
               ),
             ],
@@ -604,6 +470,115 @@ class _HoverIconState extends State<_HoverIcon> {
             onPressed: widget.onPressed,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _NewsletterForm extends StatefulWidget {
+  @override
+  _NewsletterFormState createState() => _NewsletterFormState();
+}
+
+class _NewsletterFormState extends State<_NewsletterForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _subscribe() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      // TODO: Replace with your actual API endpoint
+      final response = await http.post(
+        Uri.parse('YOUR_API_ENDPOINT/subscribe'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': _emailController.text}),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Successfully subscribed to newsletter!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _emailController.clear();
+      } else {
+        throw Exception('Failed to subscribe');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error subscribing: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                hintText: 'Enter your email',
+                hintStyle: TextStyle(color: Colors.white54),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white24),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+              ),
+              style: const TextStyle(color: Colors.white),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                    .hasMatch(value)) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          ElevatedButton(
+            onPressed: _isLoading ? null : _subscribe,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            ),
+            child: _isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Text('Subscribe'),
+          ),
+        ],
       ),
     );
   }

@@ -52,20 +52,17 @@ class _HeroSectionState extends State<HeroSection>
   }
 
   void _startAutoSlide() {
-    // Automatically cycle through background images every 5 seconds
     _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
       if (_currentIndex < _backgroundImages.length - 1) {
         _currentIndex++;
       } else {
         _currentIndex = 0;
       }
-      if (_pageController.hasClients) {
-        _pageController.animateToPage(
-          _currentIndex,
-          duration: const Duration(milliseconds: 1200),
-          curve: Curves.easeInOutCubic,
-        );
-      }
+      _pageController.animateToPage(
+        _currentIndex,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
     });
   }
 
@@ -90,44 +87,39 @@ class _HeroSectionState extends State<HeroSection>
       width: double.infinity,
       child: Stack(
         children: [
-          // 1) PageView with a smooth scale & fade animation
+          // Background Images with Slide Animation
           PageView.builder(
             controller: _pageController,
             onPageChanged: (index) => setState(() => _currentIndex = index),
             itemCount: _backgroundImages.length,
             itemBuilder: (context, index) {
-              return AnimatedBuilder(
-                animation: _pageController,
-                builder: (context, child) {
-                  double value = 1.0;
-                  if (_pageController.position.haveDimensions) {
-                    // Distances the current page from 'index'
-                    value = _pageController.page! - index;
-                    // Slightly scale & fade out non-active pages
-                    value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
-                  }
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.scale(
-                      scale: Curves.easeOut.transform(value),
-                      child: child,
-                    ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(_backgroundImages[index]),
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.6),
-                        BlendMode.darken,
-                      ),
+              return Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(_backgroundImages[index]),
+                    fit: BoxFit.cover,
+                    colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.3),
+                      BlendMode.darken,
                     ),
                   ),
                 ),
               );
             },
+          ),
+          // Gradient overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.2),
+                  Colors.black.withOpacity(0.4),
+                ],
+                stops: const [0.0, 1.0],
+              ),
+            ),
           ),
 
           // 2) Main hero content overlay
@@ -269,18 +261,16 @@ class _HeroSectionState extends State<HeroSection>
           onExit: (_) => setState(() => isHovered = false),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            transform:
-                isHovered
-                    ? (Matrix4.identity()..scale(1.05))
-                    : Matrix4.identity(),
+            transform: isHovered
+                ? (Matrix4.identity()..scale(1.05))
+                : Matrix4.identity(),
             child: ElevatedButton(
               onPressed: () {},
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (states) =>
-                      states.contains(MaterialState.hovered)
-                          ? color.withOpacity(0.8)
-                          : color,
+                  (states) => states.contains(MaterialState.hovered)
+                      ? color.withOpacity(0.8)
+                      : color,
                 ),
                 elevation: MaterialStateProperty.resolveWith<double>(
                   (states) => states.contains(MaterialState.hovered) ? 6 : 3,
@@ -313,10 +303,9 @@ class _HeroSectionState extends State<HeroSection>
                   const SizedBox(width: 10),
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    transform:
-                        isHovered
-                            ? (Matrix4.identity()..translate(5.0, 0.0))
-                            : Matrix4.identity(),
+                    transform: isHovered
+                        ? (Matrix4.identity()..translate(5.0, 0.0))
+                        : Matrix4.identity(),
                     child: Icon(
                       icon,
                       size: isSmallPhone ? 14 : (isMobile ? 16 : 18),
@@ -335,13 +324,23 @@ class _HeroSectionState extends State<HeroSection>
   /// Page indicator widget
   Widget _buildIndicator(bool isActive) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: isActive ? 22 : 8,
+      width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? Colors.red : Colors.white.withOpacity(0.4),
+        color: isActive ? Colors.red : const Color(0xFF8E8E8E).withOpacity(0.4),
         borderRadius: BorderRadius.circular(4),
+        boxShadow: isActive
+            ? [
+                BoxShadow(
+                  color: Colors.red.withOpacity(0.3),
+                  blurRadius: 8,
+                  spreadRadius: 2,
+                )
+              ]
+            : null,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SpareListComponent extends StatefulWidget {
   const SpareListComponent({Key? key}) : super(key: key);
@@ -11,6 +12,8 @@ class _SpareListComponentState extends State<SpareListComponent>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeInAnimation;
+  final TextEditingController _searchController = TextEditingController();
+  List<Map<String, dynamic>> _filteredSpareItems = [];
 
   /// Sample spare parts data
   final List<Map<String, dynamic>> _spareItems = [
@@ -113,14 +116,12 @@ class _SpareListComponentState extends State<SpareListComponent>
   @override
   void initState() {
     super.initState();
+    _filteredSpareItems = List.from(_spareItems);
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 800),
       vsync: this,
+      duration: const Duration(milliseconds: 500),
     );
-    _fadeInAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    _fadeInAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
     _controller.forward();
 
     // Initialize the displayed items with the initial set
@@ -130,7 +131,33 @@ class _SpareListComponentState extends State<SpareListComponent>
   @override
   void dispose() {
     _controller.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  void _handleSearch(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredSpareItems = List.from(_spareItems);
+      } else {
+        final searchLower = query.toLowerCase();
+        _filteredSpareItems = _spareItems.where((item) {
+          final title = (item['title'] ?? '').toString().toLowerCase();
+          final code = (item['code'] ?? '').toString().toLowerCase();
+          final price = (item['price'] ?? '').toString().toLowerCase();
+          return title.contains(searchLower) ||
+              code.contains(searchLower) ||
+              price.contains(searchLower);
+        }).toList();
+      }
+    });
+  }
+
+  void _handleReset() {
+    setState(() {
+      _searchController.clear();
+      _filteredSpareItems = List.from(_spareItems);
+    });
   }
 
   // Function to handle view more button press
@@ -151,44 +178,117 @@ class _SpareListComponentState extends State<SpareListComponent>
     });
   }
 
+  void _showSparePartDetails(BuildContext context, Map<String, dynamic> item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(item['title'] ?? 'Spare Part Details'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (item['imageUrl'] != null && item['imageUrl'].isNotEmpty)
+                  Image.network(
+                    item['imageUrl'],
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                const SizedBox(height: 16),
+                Text('Part Code: ${item['code']}'),
+                const SizedBox(height: 8),
+                Text('Price: \$${item['price']}'),
+                const SizedBox(height: 8),
+                Text('Status: ${item['status']}'),
+                const SizedBox(height: 16),
+                const Text(
+                  'Would you like to inquire about this part?',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.push('/inquiry', extra: {
+                  'partCode': item['code'],
+                  'partName': item['title'],
+                  'price': item['price'],
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Make Inquiry'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   /// Main build
   @override
   Widget build(BuildContext context) {
-    // A background container to add a subtle color or gradient
-    return Container(
-      // Example: soft gradient background (optional)
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFDFDFD), Color(0xFFF8F8F8)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: FadeTransition(
-        opacity: _fadeInAnimation,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          child: Column(
-            children: [
-              _buildSearchSection(),
-              const SizedBox(height: 20),
-              _buildSpareGrid(),
-              const SizedBox(height: 20),
-              _buildToggleViewButton(),
-            ],
-          ),
-        ),
+    return SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 600;
+          return SingleChildScrollView(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFFDFDFD), Color(0xFFF8F8F8)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: FadeTransition(
+                opacity: _fadeInAnimation,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? 24 : 16,
+                    vertical: isDesktop ? 32 : 20,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildSearchSection(isDesktop),
+                      SizedBox(height: isDesktop ? 32 : 20),
+                      _buildSpareGrid(isDesktop),
+                      SizedBox(height: isDesktop ? 32 : 20),
+                      _buildToggleViewButton(isDesktop),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
   /// Search Bar + Buttons Section
-  Widget _buildSearchSection() {
+  Widget _buildSearchSection(bool isDesktop) {
     return Center(
-      // Center the search bar
       child: Container(
-        width: 600, // Decreased width
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        width: isDesktop ? 800 : double.infinity,
+        padding: EdgeInsets.symmetric(
+          horizontal: isDesktop ? 16 : 8,
+          vertical: isDesktop ? 12 : 8,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -202,54 +302,81 @@ class _SpareListComponentState extends State<SpareListComponent>
         ),
         child: Row(
           children: [
-            // Search icon on the left
-            const Padding(
-              padding: EdgeInsets.only(left: 8, right: 4),
-              child: Icon(Icons.search, color: Colors.black54),
+            Padding(
+              padding: EdgeInsets.only(
+                left: isDesktop ? 16 : 8,
+                right: isDesktop ? 8 : 4,
+              ),
+              child: const Icon(Icons.search, color: Colors.black54),
             ),
             Expanded(
               child: TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
                   hintText: "Search by Keywords, Stock No., Part No.",
                   border: InputBorder.none,
-                  hintStyle: const TextStyle(color: Colors.black54),
+                  hintStyle: TextStyle(
+                    color: Colors.black54,
+                    fontSize: isDesktop ? 16 : 14,
+                  ),
                 ),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
-                ), // Set text color to black
-              ),
-            ),
-            // "Search" button
-            ElevatedButton.icon(
-              icon: const Icon(Icons.search, size: 18),
-              label: const Text("Search"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  fontSize: isDesktop ? 16 : 14,
                 ),
+                onChanged: _handleSearch,
               ),
-              onPressed: () {
-                // TODO: Implement search logic
-              },
             ),
-            const SizedBox(width: 8),
-            // "Reset" button
-            OutlinedButton.icon(
-              icon: const Icon(Icons.refresh, size: 18),
-              label: const Text("Reset"),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
+            if (isDesktop) ...[
+              ElevatedButton.icon(
+                icon: const Icon(Icons.search, size: 20),
+                label: const Text("Search", style: TextStyle(fontSize: 16)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
+                onPressed: () {
+                  // TODO: Implement search logic
+                },
               ),
-              onPressed: () {
-                // TODO: Implement reset logic
-              },
-            ),
+              const SizedBox(width: 12),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.refresh, size: 20),
+                label: const Text("Reset", style: TextStyle(fontSize: 16)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(color: Colors.red),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: _handleReset,
+              ),
+            ] else ...[
+              IconButton(
+                icon: const Icon(Icons.search),
+                color: Colors.red,
+                onPressed: () {
+                  // TODO: Implement search logic
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                color: Colors.red,
+                onPressed: _handleReset,
+              ),
+            ],
           ],
         ),
       ),
@@ -257,25 +384,37 @@ class _SpareListComponentState extends State<SpareListComponent>
   }
 
   /// Grid Section for Spare Parts
-  Widget _buildSpareGrid() {
-    return Wrap(
-      spacing: 20,
-      runSpacing: 20,
-      alignment: WrapAlignment.center, // Center the grid items
-      children: _displayedItems.map((item) => _buildSpareItem(item)).toList(),
+  Widget _buildSpareGrid(bool isDesktop) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = isDesktop
+            ? (constraints.maxWidth / 250).floor()
+            : (constraints.maxWidth / 200).floor();
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount.clamp(1, 4),
+            childAspectRatio: isDesktop ? 0.8 : 0.7,
+            crossAxisSpacing: isDesktop ? 24 : 16,
+            mainAxisSpacing: isDesktop ? 24 : 16,
+          ),
+          itemCount: _filteredSpareItems.length,
+          itemBuilder: (context, index) =>
+              _buildSpareItem(_filteredSpareItems[index], isDesktop),
+        );
+      },
     );
   }
 
   /// Single Spare Item Card with Hover & Material styling
-  Widget _buildSpareItem(Map<String, dynamic> item) {
+  Widget _buildSpareItem(Map<String, dynamic> item, bool isDesktop) {
     return MouseRegion(
       onEnter: (_) => setState(() {}),
       onExit: (_) => setState(() {}),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        width: 200,
-        height: 320, // Fixed height for all cards
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -289,96 +428,79 @@ class _SpareListComponentState extends State<SpareListComponent>
         ),
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
           child: InkWell(
+            onTap: () => _showSparePartDetails(context, item),
             borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              // TODO: Navigate to details or show a popup
-            },
-            child: Column(
-              children: [
-                // Image Section with fixed height
-                SizedBox(
-                  height: 160, // Fixed height for image section
-                  child: Container(
+            child: Padding(
+              padding: EdgeInsets.all(isDesktop ? 20 : 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: isDesktop ? 180 : 150,
                     decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      ),
-                      color: Colors.red.withOpacity(0.05),
-                    ),
-                    child:
-                        (item["imageUrl"] ?? "").isNotEmpty
-                            ? ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                              child: Image.network(
-                                item["imageUrl"],
-                                fit: BoxFit.cover,
-                              ),
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                      image: item['imageUrl'] != null &&
+                              item['imageUrl'].isNotEmpty
+                          ? DecorationImage(
+                              image: NetworkImage(item['imageUrl']),
+                              fit: BoxFit.cover,
                             )
-                            : const Center(
-                              child: Text(
-                                "Image Coming Soon",
-                                style: TextStyle(color: Colors.black54),
-                              ),
-                            ),
+                          : null,
+                    ),
+                    child: item['imageUrl'] == null || item['imageUrl'].isEmpty
+                        ? Icon(Icons.image,
+                            size: isDesktop ? 60 : 50, color: Colors.grey)
+                        : null,
                   ),
-                ),
-                const SizedBox(height: 12),
-
-                // Content section with fixed padding
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SizedBox(
-                        height: 40, // Fixed height for title
-                        child: Text(
-                          item["title"] ?? "",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Code : ${item["code"] ?? ""}",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      if (item["status"] != null && item["status"].isNotEmpty)
-                        Text(
-                          item["status"],
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.green,
-                          ),
-                        ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "${item["price"]} JPY",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
+                  SizedBox(height: isDesktop ? 20 : 16),
+                  Text(
+                    item['title'] ?? '',
+                    style: TextStyle(
+                      fontSize: isDesktop ? 18 : 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  SizedBox(height: isDesktop ? 12 : 8),
+                  Text(
+                    'Code: ${item['code']}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: isDesktop ? 16 : 14,
+                    ),
+                  ),
+                  SizedBox(height: isDesktop ? 12 : 8),
+                  Text(
+                    '\$${item['price']}',
+                    style: TextStyle(
+                      fontSize: isDesktop ? 20 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isDesktop ? 12 : 8,
+                      vertical: isDesktop ? 6 : 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green[50],
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      item['status'] ?? '',
+                      style: TextStyle(
+                        color: Colors.green[700],
+                        fontSize: isDesktop ? 14 : 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -387,43 +509,48 @@ class _SpareListComponentState extends State<SpareListComponent>
   }
 
   /// Toggle View Button (View More/View Less)
-  Widget _buildToggleViewButton() {
+  Widget _buildToggleViewButton(bool isDesktop) {
     return Center(
-      // Center the button
-      child:
-          _expandedView
-              ? ElevatedButton.icon(
-                icon: const Icon(Icons.remove_circle_outline, size: 18),
-                label: const Text("View Less", style: TextStyle(fontSize: 16)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: _handleViewLess,
-              )
-              : ElevatedButton.icon(
-                icon: const Icon(Icons.add_circle_outline, size: 18),
-                label: const Text("View More", style: TextStyle(fontSize: 16)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                onPressed: _handleViewMore,
+      child: _expandedView
+          ? ElevatedButton.icon(
+              icon:
+                  Icon(Icons.remove_circle_outline, size: isDesktop ? 24 : 18),
+              label: Text(
+                "View Less",
+                style: TextStyle(fontSize: isDesktop ? 18 : 16),
               ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isDesktop ? 40 : 30,
+                  vertical: isDesktop ? 16 : 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: _handleViewLess,
+            )
+          : ElevatedButton.icon(
+              icon: Icon(Icons.add_circle_outline, size: isDesktop ? 24 : 18),
+              label: Text(
+                "View More",
+                style: TextStyle(fontSize: isDesktop ? 18 : 16),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isDesktop ? 40 : 30,
+                  vertical: isDesktop ? 16 : 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: _handleViewMore,
+            ),
     );
   }
 }

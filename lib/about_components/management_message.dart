@@ -99,26 +99,63 @@ class _ManagementMessageState extends State<ManagementMessage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image.asset(
+                'assets/images/president.jpg', // Make sure to add this image
+                width: 150,
+                height: 150,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(
-              "Company Vision and Mission",
+              "Message from the President",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
             Text(
-              "The history of RamaDBK runs as far back as 1988. Starting as a young entrepreneur, I established a company that has "
-              "now become a leading exporter of Japanese vehicles worldwide. Despite initial challenges, we successfully introduced "
-              "a shift in mindset, encouraging buyers to purchase from international dealers. Today, our digital platform makes vehicle "
-              "export easier and more efficient, helping customers access quality automobiles globally.",
+              "Dear Valued Partners and Customers,",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              "Since our establishment in 1988, RamaDBK has been committed to excellence in the automotive export industry. "
+              "What began as a vision to bridge the gap between Japanese quality vehicles and global markets has grown into "
+              "a trusted enterprise serving customers in over 50 countries.",
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              "Our success story is built on three fundamental principles: unwavering commitment to quality, "
+              "transparent business practices, and exceptional customer service. These principles continue to guide "
+              "us as we embrace new technologies and expand our global presence.",
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 15),
+            Text(
+              "Thank you for your trust in RamaDBK. We look forward to serving you and contributing to your success.",
               style: TextStyle(fontSize: 16, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             Text(
-              "Our goal is to provide affordable, high-quality vehicles while ensuring customer satisfaction. We believe that a "
-              "happy customer generates a positive chain reaction in the industry, contributing to our success worldwide. "
-              "With a dedicated and professional team, we continue to expand our global reach while upholding transparency and trust.",
+              "Jagath C. Ramanayake",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            Text(
+              "President & CEO",
               style: TextStyle(fontSize: 16, color: Colors.black54),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -132,7 +169,7 @@ class _ManagementMessageState extends State<ManagementMessage>
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          "Leadership & Industry Involvement",
+          "Leadership & Industry Recognition",
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -140,36 +177,38 @@ class _ManagementMessageState extends State<ManagementMessage>
           ),
         ),
         const SizedBox(height: 20),
-        Wrap(
-          spacing: 20,
-          runSpacing: 20,
-          alignment: WrapAlignment.center,
-          children: [
-            _buildRoleCard(
-              title: "President of SLBCJ",
-              description:
-                  "Recognized by the Sri Lankan Embassy in Japan as an institution promoting business between Japan and Sri Lanka.",
-              icon: Icons.business_center,
-            ),
-            _buildRoleCard(
-              title: "President of SLAAJ (2012-2017)",
-              description:
-                  "Served as the President of Sri Lanka Automobile Association in Japan, a non-profit organization supporting the automotive industry.",
-              icon: Icons.directions_car,
-            ),
-            _buildRoleCard(
-              title: "Advisory Board Member of SLAAJ",
-              description:
-                  "Since 2017, I have continued serving on the board, strengthening connections between Sri Lanka and Japan in the automotive sector.",
-              icon: Icons.group,
-            ),
-            _buildRoleCard(
-              title: "Director of JUMVEA",
-              description:
-                  "Japan Used Motor Vehicle Exporters Association (JUMVEA) - Established under the Ministry of Economy, Trade, and Industry.",
-              icon: Icons.public,
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            bool isMobile = constraints.maxWidth < 768;
+            return Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              alignment: WrapAlignment.center,
+              children: [
+                _buildRoleCard(
+                  title: "President of SLBCJ",
+                  description:
+                      "Leading the Sri Lanka Business Council in Japan to strengthen bilateral business relationships and promote trade opportunities.",
+                  icon: Icons.business_center,
+                  width: isMobile ? constraints.maxWidth * 0.9 : 300,
+                ),
+                _buildRoleCard(
+                  title: "Director of JUMVEA",
+                  description:
+                      "Contributing to the development and regulation of Japan's used vehicle export industry through the Japan Used Motor Vehicle Exporters Association.",
+                  icon: Icons.directions_car,
+                  width: isMobile ? constraints.maxWidth * 0.9 : 300,
+                ),
+                _buildRoleCard(
+                  title: "Former President of SLAAJ",
+                  description:
+                      "Served as President of Sri Lanka Automobile Association in Japan (2012-2017), fostering automotive industry connections between the two nations.",
+                  icon: Icons.group,
+                  width: isMobile ? constraints.maxWidth * 0.9 : 300,
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -180,6 +219,7 @@ class _ManagementMessageState extends State<ManagementMessage>
     required String title,
     required String description,
     required IconData icon,
+    required double width,
   }) {
     return MouseRegion(
       onEnter: (_) => setState(() {}),
@@ -187,7 +227,7 @@ class _ManagementMessageState extends State<ManagementMessage>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        width: 320,
+        width: width,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -203,17 +243,29 @@ class _ManagementMessageState extends State<ManagementMessage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: Colors.red),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Icon(icon, size: 32, color: Colors.red),
+            ),
             const SizedBox(height: 15),
             Text(
               title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
               description,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.black54),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+                height: 1.5,
+              ),
             ),
           ],
         ),

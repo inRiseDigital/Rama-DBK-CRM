@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
-
-/// Simple data model for a vehicle
-class VehicleData {
-  final String title;
-  final String price;
-  final String imagePath;
-  final String? discount;
-
-  const VehicleData({
-    required this.title,
-    required this.price,
-    required this.imagePath,
-    this.discount,
-  });
-}
+import '../models/vehicle_model.dart';  // Make sure this import is correct
+import '../services/api_service.dart';
 
 class VehicleStock extends StatefulWidget {
   final Map<String, String?>? filters;
@@ -25,189 +12,62 @@ class VehicleStock extends StatefulWidget {
 }
 
 class _VehicleStockState extends State<VehicleStock> {
-  // Static sample categories data
-  static const List<Map<String, dynamic>> _allCategories = [
-    {
-      'vehicles': [
-        VehicleData(
-          title: 'Mercedes-Benz A200 2020',
-          price: '32,900 USD',
-          imagePath: 'assets/images/car_01.png',
-          discount: '5',
-        ),
-        VehicleData(
-          title: 'Toyota Alphard 3.5L 2022',
-          price: '65,800 USD',
-          imagePath: 'assets/images/car_02.jpg',
-        ),
-        VehicleData(
-          title: 'Mercedes-Benz Actros 2020',
-          price: '98,500 USD',
-          imagePath: 'assets/images/car_03.png',
-          discount: '8',
-        ),
-        VehicleData(
-          title: 'BMW X5 xDrive40i 2023',
-          price: '75,900 USD',
-          imagePath: 'assets/images/car_04.jpg',
-        ),
-      ],
-    },
-    {
-      'vehicles': [
-        VehicleData(
-          title: 'Mitsubishi Canter 4.9D 2020',
-          price: '28,500 USD',
-          imagePath: 'assets/images/car_05.jpg',
-          discount: '10',
-        ),
-        VehicleData(
-          title: 'Nissan Elgrand 3.5L 2021',
-          price: '42,900 USD',
-          imagePath: 'assets/images/car_06.png',
-          discount: '7',
-        ),
-        VehicleData(
-          title: 'BMW M4 Competition 2024',
-          price: '89,900 USD',
-          imagePath: 'assets/images/car_07.jpg',
-        ),
-        VehicleData(
-          title: 'Toyota Hilux 2.8D 2022',
-          price: '45,800 USD',
-          imagePath: 'assets/images/car_08.png',
-          discount: '5',
-        ),
-      ],
-    },
-    {
-      'vehicles': [
-        VehicleData(
-          title: 'Acura MDX Type S 2023',
-          price: '58,400 USD',
-          imagePath: 'assets/images/car_09.jpg',
-          discount: '6',
-        ),
-        VehicleData(
-          title: 'Honda Vezel e:HEV 2024',
-          price: '38,900 USD',
-          imagePath: 'assets/images/car_10.png',
-        ),
-        VehicleData(
-          title: 'BMW 330i M Sport 2023',
-          price: '52,900 USD',
-          imagePath: 'assets/images/car_11.jpg',
-          discount: '9',
-        ),
-        VehicleData(
-          title: 'Isuzu ELF 5.2D 2022',
-          price: '35,800 USD',
-          imagePath: 'assets/images/car_12.png',
-          discount: '12',
-        ),
-      ],
-    },
-    {
-      'vehicles': [
-        VehicleData(
-          title: 'Hino Ranger FG 2023',
-          price: '78,500 USD',
-          imagePath: 'assets/images/car_13.jpg',
-        ),
-        VehicleData(
-          title: 'Isuzu Giga 6x4 2022',
-          price: '92,800 USD',
-          imagePath: 'assets/images/car_14.png',
-          discount: '8',
-        ),
-        VehicleData(
-          title: 'Toyota Land Cruiser ZX 2024',
-          price: '96,500 USD',
-          imagePath: 'assets/images/car_15.png',
-        ),
-        VehicleData(
-          title: 'Lexus LX600 F Sport 2023',
-          price: '105,900 USD',
-          imagePath: 'assets/images/car_16.jpg',
-          discount: '5',
-        ),
-      ],
-    },
-  ];
+  bool _isLoading = true;
+  bool _hasError = false;
+  String _errorMessage = '';
+  List<Vehicle> _vehicles = [];
+  int _totalVehicles = 0;
+  int _currentPage = 1;
+  bool _hasNextPage = false;
+  bool _hasPreviousPage = false;
 
-  List<Map<String, dynamic>> get _filteredCategories {
-    if (widget.filters == null || widget.filters!.isEmpty) {
-      return _allCategories;
+  @override
+  void initState() {
+    super.initState();
+    _fetchVehicles();
+  }
+
+  @override
+  void didUpdateWidget(VehicleStock oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Refetch vehicles if filters change
+    if (oldWidget.filters != widget.filters) {
+      _fetchVehicles();
     }
+  }
 
-    return _allCategories
-        .map((category) {
-          final vehicles =
-              (category['vehicles'] as List<VehicleData>).where((vehicle) {
-                final title = vehicle.title.toLowerCase();
-                final filters = widget.filters!;
+  Future<void> _fetchVehicles() async {
+    setState(() {
+      _isLoading = true;
+      _hasError = false;
+      _errorMessage = '';
+    });
 
-                // Apply brand filter
-                if (filters['brand'] != null &&
-                    !title.contains(filters['brand']!.toLowerCase())) {
-                  return false;
-                }
+    try {
+      final result = await ApiService.fetchVehicles(
+        filters: widget.filters,
+        page: _currentPage,
+      );
 
-                // Apply model filter
-                if (filters['model'] != null &&
-                    !title.contains(filters['model']!.toLowerCase())) {
-                  return false;
-                }
-
-                // Apply year filter
-                if (filters['yearFrom'] != null || filters['yearTo'] != null) {
-                  final yearMatch = RegExp(r'\d{4}').firstMatch(title);
-                  if (yearMatch != null) {
-                    final year = int.parse(yearMatch.group(0)!);
-                    if (filters['yearFrom'] != null &&
-                        year < int.parse(filters['yearFrom']!)) {
-                      return false;
-                    }
-                    if (filters['yearTo'] != null &&
-                        year > int.parse(filters['yearTo']!)) {
-                      return false;
-                    }
-                  }
-                }
-
-                // Apply price filter
-                if (filters['priceFrom'] != null ||
-                    filters['priceTo'] != null) {
-                  final priceStr = vehicle.price.replaceAll(
-                    RegExp(r'[^\d.]'),
-                    '',
-                  );
-                  final price = double.parse(priceStr);
-
-                  if (filters['priceFrom'] != null) {
-                    final minPrice = double.parse(
-                      filters['priceFrom']!.replaceAll(RegExp(r'[^\d.]'), ''),
-                    );
-                    if (price < minPrice) return false;
-                  }
-
-                  if (filters['priceTo'] != null) {
-                    final maxPrice = double.parse(
-                      filters['priceTo']!.replaceAll(RegExp(r'[^\d.]'), ''),
-                    );
-                    if (price > maxPrice) return false;
-                  }
-                }
-
-                // Add more filter conditions as needed...
-
-                return true;
-              }).toList();
-
-          return {'vehicles': vehicles};
-        })
-        .where((category) => (category['vehicles'] as List).isNotEmpty)
-        .toList();
+      setState(() {
+        _vehicles = result['vehicles'] as List<Vehicle>;
+        _totalVehicles = result['count'] as int;
+        _hasNextPage = result['next'] != null;
+        _hasPreviousPage = result['previous'] != null;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+        if (e.toString().contains('SocketException') || 
+            e.toString().contains('Connection refused')) {
+          _errorMessage = 'Could not connect to the server. Please check your internet connection or try again later.';
+        } else {
+          _errorMessage = 'Failed to load vehicles: ${e.toString()}';
+        }
+      });
+    }
   }
 
   @override
@@ -274,7 +134,59 @@ class _VehicleStockState extends State<VehicleStock> {
                   ),
                   SizedBox(height: isMobile ? 20 : 40),
 
-                  if (_filteredCategories.isEmpty)
+                  // Loading state
+                  if (_isLoading)
+                    Center(
+                      child: Column(
+                        children: [
+                          CircularProgressIndicator(color: primaryColor),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Loading vehicles...',
+                            style: TextStyle(color: secondaryColor),
+                          ),
+                        ],
+                      ),
+                    )
+                  // Error state
+                  else if (_hasError)
+                    Center(
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: primaryColor,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Failed to load vehicles',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: secondaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _errorMessage,
+                            style: TextStyle(color: Colors.grey[700]),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _fetchVehicles,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  // Empty state
+                  else if (_vehicles.isEmpty)
                     Center(
                       child: Padding(
                         padding: EdgeInsets.all(isMobile ? 20.0 : 32.0),
@@ -300,20 +212,82 @@ class _VehicleStockState extends State<VehicleStock> {
                         ),
                       ),
                     )
+                  // Show vehicle grid
                   else
-                    for (final category in _filteredCategories) ...[
-                      _buildCategorySection(
-                        context,
-                        '',
-                        category['vehicles'] as List<VehicleData>,
-                        isMobile,
-                        primaryColor,
-                        secondaryColor,
-                        gridColumns,
-                        childAspectRatio,
-                      ),
-                      SizedBox(height: isMobile ? 24 : 48),
-                    ],
+                    Column(
+                      children: [
+                        // Results counter
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Text(
+                            'Found $_totalVehicles vehicles',
+                            style: TextStyle(
+                              color: secondaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        
+                        // Vehicle grid
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: gridColumns,
+                            childAspectRatio: childAspectRatio,
+                            crossAxisSpacing: isMobile ? 12 : 24,
+                            mainAxisSpacing: isMobile ? 12 : 24,
+                          ),
+                          itemCount: _vehicles.length,
+                          itemBuilder: (context, index) => VehicleCard(
+                            vehicle: _vehicles[index],
+                            primaryColor: primaryColor,
+                            secondaryColor: secondaryColor,
+                            isMobile: isMobile,
+                          ),
+                        ),
+                        
+                        // Pagination controls
+                        if (_totalVehicles > 0)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 24.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (_hasPreviousPage)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentPage--;
+                                      });
+                                      _fetchVehicles();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: primaryColor,
+                                    ),
+                                    child: const Text('Previous'),
+                                  ),
+                                SizedBox(width: _hasPreviousPage && _hasNextPage ? 16.0 : 0),
+                                if (_hasNextPage)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentPage++;
+                                      });
+                                      _fetchVehicles();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: primaryColor,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    child: const Text('Next'),
+                                  ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -322,83 +296,17 @@ class _VehicleStockState extends State<VehicleStock> {
       ),
     );
   }
-
-  Widget _buildCategorySection(
-    BuildContext context,
-    String title,
-    List<VehicleData> vehicles,
-    bool isMobile,
-    Color primaryColor,
-    Color secondaryColor,
-    int gridColumns,
-    double childAspectRatio,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title.isNotEmpty) ...[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: secondaryColor,
-                      fontWeight: FontWeight.w800,
-                      fontSize: isMobile ? 16 : 20,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: isMobile ? 12 : 20),
-        ],
-
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: gridColumns,
-            childAspectRatio: childAspectRatio,
-            crossAxisSpacing: isMobile ? 12 : 24,
-            mainAxisSpacing: isMobile ? 12 : 24,
-          ),
-          itemCount: vehicles.length,
-          itemBuilder:
-              (context, index) => VehicleCard(
-                data: vehicles[index],
-                primaryColor: primaryColor,
-                secondaryColor: secondaryColor,
-                isMobile: isMobile,
-              ),
-        ),
-      ],
-    );
-  }
 }
 
 class VehicleCard extends StatefulWidget {
-  final VehicleData data;
+  final Vehicle vehicle;
   final Color primaryColor;
   final Color secondaryColor;
   final bool isMobile;
 
   const VehicleCard({
     Key? key,
-    required this.data,
+    required this.vehicle,
     required this.primaryColor,
     required this.secondaryColor,
     required this.isMobile,
@@ -422,130 +330,6 @@ class _VehicleCardState extends State<VehicleCard> {
     _emailController.dispose();
     _messageController.dispose();
     super.dispose();
-  }
-
-  // Helper function to get vehicle specs
-  Map<String, String> getVehicleSpecs(String title) {
-    // Create a more generic spec generator for unknown vehicles
-    String generateGenericSpecs(String title) {
-      final vehicleType = title.toLowerCase();
-      String specs = '''
-• Model: $title
-• Year: ${RegExp(r'\d{4}').firstMatch(title)?.group(0) ?? 'Available upon request'}
-''';
-
-      if (vehicleType.contains('mercedes') ||
-          vehicleType.contains('bmw') ||
-          vehicleType.contains('lexus')) {
-        specs += '''
-• Category: Luxury Vehicle
-• Premium Features: Available
-• Advanced Safety Systems: Included
-''';
-      } else if (vehicleType.contains('toyota') ||
-          vehicleType.contains('honda') ||
-          vehicleType.contains('nissan')) {
-        specs += '''
-• Category: Passenger Vehicle
-• Reliability: High
-• Fuel Efficiency: Optimized
-''';
-      } else if (vehicleType.contains('truck') ||
-          vehicleType.contains('canter') ||
-          vehicleType.contains('actros')) {
-        specs += '''
-• Category: Commercial Vehicle
-• Load Capacity: Available upon request
-• Commercial Features: Included
-''';
-      }
-
-      specs += '''
-• Engine: Details available upon request
-• Transmission: Details available upon request
-• Safety Features: Standard safety features included
-• Warranty: Standard manufacturer warranty applies
-
-Please contact our sales team for complete vehicle specifications.''';
-
-      return specs;
-    }
-
-    final specs = {
-      'Mercedes-Benz A200 2020': '''
-• Engine: 1.3L Turbocharged 4-cylinder
-• Power: 163 hp @ 5,500 rpm
-• Transmission: 7G-DCT Automatic
-• Acceleration (0-100 km/h): 8.2 seconds
-• Fuel Economy: 5.4L/100km combined
-• Features: MBUX infotainment, LED headlights, Dynamic Select
-• Safety: Active Brake Assist, Attention Assist, Active Lane Keeping
-• Warranty: 4 years/50,000 km''',
-
-      'Toyota Alphard 3.5L 2022': '''
-• Engine: 3.5L V6 Direct-injection
-• Power: 296 hp @ 6,600 rpm
-• Transmission: 8-speed Automatic
-• Seating: 7 Captain Seats with Ottoman
-• Features: Twin Moonroof, Power Sliding Doors
-• Entertainment: 10.1" Display, JBL 17-speaker system
-• Safety: Toyota Safety Sense, Panoramic View Monitor
-• Warranty: 3 years/100,000 km''',
-
-      'Mercedes-Benz Actros 2020': '''
-• Engine: OM 471 12.8L Inline-6 Diesel
-• Power: 476 hp @ 1,600 rpm
-• Torque: 2,300 Nm
-• Transmission: PowerShift 3 12-speed
-• Cab: GigaSpace, 2.5m width
-• Features: MirrorCam, Multimedia Cockpit
-• Safety: Active Brake Assist 5, Sideguard Assist
-• Service Interval: 100,000 km''',
-
-      'BMW X5 xDrive40i 2023': '''
-• Engine: 3.0L TwinPower Turbo inline-6
-• Power: 375 hp @ 5,200-6,250 rpm
-• Transmission: 8-speed Sport Automatic
-• 0-60 mph: 5.3 seconds
-• Features: Live Cockpit Pro, Panoramic Roof
-• Interior: Vernasca Leather, 12.3" displays
-• Safety: Driving Assistant Professional
-• Warranty: 4 years/50,000 miles''',
-
-      'Mitsubishi Canter 4.9D 2020': '''
-• Engine: 4.9L 4-cylinder Diesel
-• Power: 175 hp @ 2,700 rpm
-• Transmission: 6-speed Manual
-• Payload Capacity: 4,990 kg
-• Body Length: 20 feet
-• Features: Air Conditioning, Power Windows
-• Safety: ABS, Lane Departure Warning
-• Warranty: 3 years/100,000 km''',
-
-      'Nissan Elgrand 3.5L 2021': '''
-• Engine: 3.5L V6 VQ35DE
-• Power: 280 hp @ 6,400 rpm
-• Transmission: XTRONIC CVT
-• Seating: 8 leather seats
-• Features: Dual Sunroof, Power Tailgate
-• Entertainment: 11" Rear Monitor
-• Safety: Intelligent Around View Monitor
-• Warranty: 3 years/100,000 km''',
-
-      'BMW M4 Competition 2024': '''
-• Engine: 3.0L Twin-Turbo inline-6
-• Power: 503 hp @ 6,250 rpm
-• Transmission: 8-speed M Steptronic
-• 0-60 mph: 3.4 seconds
-• Features: M Drive Professional, Carbon Fiber Roof
-• Interior: M Sport Seats, M-specific displays
-• Safety: M Drive Professional with M Drift Analyzer
-• Warranty: 4 years/50,000 miles''',
-
-      // Add more vehicle specifications as needed...
-    };
-
-    return {'specs': specs[title] ?? generateGenericSpecs(title)};
   }
 
   @override
@@ -580,21 +364,24 @@ Please contact our sales team for complete vehicle specifications.''';
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Vehicle image with shimmer loading effect
+                    // Vehicle image with fallback
                     Hero(
-                      tag: widget.data.imagePath,
-                      child: Image.asset(
-                        widget.data.imagePath,
+                      tag: widget.vehicle.id.toString(),
+                      child: Image.network(
+                        widget.vehicle.getImageUrl(),
                         fit: BoxFit.cover,
-                        errorBuilder:
-                            (context, error, stackTrace) => Container(
-                              color: Colors.grey[100],
-                              child: Icon(
-                                Icons.directions_car,
-                                size: 40,
-                                color: widget.primaryColor.withOpacity(0.3),
-                              ),
+                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                          'assets/images/car_placeholder.png',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey[100],
+                            child: Icon(
+                              Icons.directions_car,
+                              size: 40,
+                              color: widget.primaryColor.withOpacity(0.3),
                             ),
+                          ),
+                        ),
                       ),
                     ),
 
@@ -616,48 +403,36 @@ Please contact our sales team for complete vehicle specifications.''';
                       ),
                     ),
 
-                    // Modernized discount badge
-                    if (widget.data.discount != null)
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: widget.primaryColor,
-                            borderRadius: BorderRadius.circular(25),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 8,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.local_offer,
-                                color: Colors.white,
-                                size: 14,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${widget.data.discount}% OFF',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
+                    // Stock number badge
+                    Positioned(
+                      top: 12,
+                      left: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: widget.primaryColor,
+                          borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          widget.vehicle.stockNo,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
                           ),
                         ),
                       ),
+                    ),
 
                     // Enhanced title overlay
                     Positioned(
@@ -667,7 +442,7 @@ Please contact our sales team for complete vehicle specifications.''';
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         child: Text(
-                          widget.data.title,
+                          widget.vehicle.getTitle(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -690,7 +465,7 @@ Please contact our sales team for complete vehicle specifications.''';
                 ),
               ),
 
-              // Enhanced price and actions section
+              // Enhanced details and actions section
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -702,28 +477,97 @@ Please contact our sales team for complete vehicle specifications.''';
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Price with icon
+                    // Key specs
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Engine capacity
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.settings,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${widget.vehicle.engineCapacity}cc',
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Transmission
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.sync_alt,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              widget.vehicle.transmission,
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Year
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              widget.vehicle.regYear,
+                              style: TextStyle(
+                                color: Colors.grey[800],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    
+                    const SizedBox(height: 12),
+                    const Divider(height: 1),
+                    const SizedBox(height: 12),
+                    
+                    // Location info
                     Row(
                       children: [
                         Icon(
-                          Icons.attach_money,
+                          Icons.location_on,
                           color: widget.primaryColor,
-                          size: 20,
+                          size: 16,
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          widget.data.price,
-                          style: TextStyle(
-                            color: widget.primaryColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Text(
+                            'Location: ${widget.vehicle.location}',
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontSize: 12,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
+                    
                     const SizedBox(height: 16),
 
-                    // Modernized action buttons
+                    // Action buttons
                     Row(
                       children: [
                         Expanded(
@@ -732,10 +576,7 @@ Please contact our sales team for complete vehicle specifications.''';
                             style: OutlinedButton.styleFrom(
                               foregroundColor: widget.primaryColor,
                               side: BorderSide(
-                                color:
-                                    isHovered
-                                        ? widget.primaryColor
-                                        : Colors.grey.shade300,
+                                color: isHovered ? widget.primaryColor : Colors.grey.shade300,
                                 width: 1.5,
                               ),
                               shape: RoundedRectangleBorder(
@@ -743,11 +584,11 @@ Please contact our sales team for complete vehicle specifications.''';
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.info_outline, size: 16),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8),
                                 Text(
                                   'Details',
                                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -770,11 +611,11 @@ Please contact our sales team for complete vehicle specifications.''';
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.send, size: 16),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8),
                                 Text(
                                   'Inquire',
                                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -799,8 +640,6 @@ Please contact our sales team for complete vehicle specifications.''';
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final vehicleSpecs = getVehicleSpecs(widget.data.title);
-
         return Dialog(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
@@ -830,24 +669,29 @@ Please contact our sales team for complete vehicle specifications.''';
                       ),
                     ),
 
-                    // Rest of the content
+                    // Vehicle image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        widget.data.imagePath,
-                        height: 200, // Reduced height
+                      child: Image.network(
+                        widget.vehicle.getImageUrl(),
+                        height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder:
-                            (context, error, stackTrace) => Container(
-                              height: 200,
-                              color: Colors.grey[200],
-                              child: Icon(
-                                Icons.directions_car,
-                                size: 50,
-                                color: widget.primaryColor.withOpacity(0.3),
-                              ),
+                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                          'assets/images/car_placeholder.png',
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            height: 200,
+                            color: Colors.grey[200],
+                            child: Icon(
+                              Icons.directions_car,
+                              size: 50,
+                              color: widget.primaryColor.withOpacity(0.3),
                             ),
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -856,7 +700,7 @@ Please contact our sales team for complete vehicle specifications.''';
                     Column(
                       children: [
                         Text(
-                          widget.data.title,
+                          widget.vehicle.getTitle(),
                           style: TextStyle(
                             color: widget.primaryColor,
                             fontWeight: FontWeight.bold,
@@ -874,39 +718,37 @@ Please contact our sales team for complete vehicle specifications.''';
                     ),
                     const SizedBox(height: 16),
 
-                    // Price and discount if available
+                    // Stock number and price
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: widget.primaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Stock #: ${widget.vehicle.stockNo}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
                         Text(
-                          'Price: ${widget.data.price}',
+                          widget.vehicle.getPrice(),
                           style: TextStyle(
                             color: widget.primaryColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 18,
                           ),
                         ),
-                        if (widget.data.discount != null) ...[
-                          const SizedBox(width: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: widget.primaryColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '${widget.data.discount}% OFF',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -940,7 +782,7 @@ Please contact our sales team for complete vehicle specifications.''';
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                vehicleSpecs['specs']!,
+                                widget.vehicle.getSpecifications(),
                                 style: const TextStyle(
                                   color: Colors.black87,
                                   height: 1.6,
@@ -1058,15 +900,28 @@ Please contact our sales team for complete vehicle specifications.''';
                     ),
                     const Divider(height: 20),
 
-                    // Vehicle title
-                    Text(
-                      widget.data.title,
-                      style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
+                    // Vehicle title and stock number
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.vehicle.getTitle(),
+                          style: TextStyle(
+                            color: widget.primaryColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Stock #: ${widget.vehicle.stockNo}',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 15),
 
@@ -1118,10 +973,7 @@ Please contact our sales team for complete vehicle specifications.''';
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed:
-                            _isLoading
-                                ? null
-                                : () => _handleInquirySubmit(context),
+                        onPressed: _isLoading ? null : () => _handleInquirySubmit(context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: widget.primaryColor,
                           foregroundColor: Colors.white,
@@ -1130,25 +982,24 @@ Please contact our sales team for complete vehicle specifications.''';
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child:
-                            _isLoading
-                                ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                )
-                                : const Text(
-                                  'Send Inquiry',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                        child: _isLoading
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
                                   ),
                                 ),
+                              )
+                            : const Text(
+                                'Send Inquiry',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
                       ),
                     ),
                   ],
@@ -1198,7 +1049,21 @@ Please contact our sales team for complete vehicle specifications.''';
       setState(() => _isLoading = true);
 
       try {
-        // Simulate API call
+        // Prepare the inquiry data
+        final inquiryData = {
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'message': _messageController.text,
+          'vehicle_id': widget.vehicle.id,
+          'vehicle_stock_no': widget.vehicle.stockNo,
+          'vehicle_title': widget.vehicle.getTitle(),
+        };
+        
+        // In a real app, you would send this data to your backend API
+        // Example:
+        // await ApiService.submitInquiry(inquiryData);
+        
+        // Simulate API call for now
         await Future.delayed(const Duration(seconds: 2));
 
         // Clear form
@@ -1213,7 +1078,7 @@ Please contact our sales team for complete vehicle specifications.''';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text(
-              'Inquiry sent successfully!',
+              'Inquiry sent successfully! Our team will contact you shortly.',
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: widget.primaryColor,
@@ -1228,9 +1093,9 @@ Please contact our sales team for complete vehicle specifications.''';
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
-              'Failed to send inquiry. Please try again.',
-              style: TextStyle(color: Colors.white),
+            content: Text(
+              'Failed to send inquiry: ${e.toString()}',
+              style: const TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.red.shade800,
             behavior: SnackBarBehavior.floating,
@@ -1241,7 +1106,9 @@ Please contact our sales team for complete vehicle specifications.''';
           ),
         );
       } finally {
-        setState(() => _isLoading = false);
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }

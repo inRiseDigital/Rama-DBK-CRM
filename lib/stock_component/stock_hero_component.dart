@@ -7,78 +7,64 @@ class StockHeroComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final bool isMobile = screenSize.width < 768;
-    final bool isSmallScreen = screenSize.width < 360;
 
-    return Stack(
-      children: [
-        // Background Image with SafeArea
-        Container(
-          height: isMobile ? screenSize.height * 0.4 : screenSize.height * 0.9,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            image: const DecorationImage(
-              image: AssetImage('assets/images/vehicle_group.png'),
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 24 : 48,
+        vertical: isMobile ? 36 : 48,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [const Color(0xFF2D3748), const Color(0xFF1A202C)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFF2D55).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              'Vehicle Inventory',
+              style: TextStyle(
+                color: Color(0xFFFF2D55),
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
-        // Dark Overlay with gradient for better readability
-        Container(
-          height: isMobile ? screenSize.height * 0.4 : screenSize.height * 0.9,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withOpacity(0.3),
-                Colors.black.withOpacity(0.7),
-              ],
+          SizedBox(height: isMobile ? 20 : 24),
+          Text(
+            'Find Your Perfect\nVehicle Today',
+            style: TextStyle(
+              fontSize: isMobile ? 36 : 48,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              height: 1.2,
             ),
           ),
-        ),
-        // Content with SafeArea
-        SafeArea(
-          child: Container(
-            height:
-                isMobile ? screenSize.height * 0.4 : screenSize.height * 0.9,
-            padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 16.0 : 80.0,
-              vertical: isMobile ? 16.0 : 100.0,
+          SizedBox(height: isMobile ? 12 : 16),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: isMobile ? double.infinity : 800,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (!isMobile) SizedBox(height: isSmallScreen ? 8.0 : 20.0),
-                Text(
-                  isMobile
-                      ? 'Find Your Perfect Vehicle'
-                      : 'Driven by Excellence,\nTrusted Worldwide',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isSmallScreen ? 24.0 : (isMobile ? 28.0 : 50.0),
-                    letterSpacing: 0.5,
-                    height: 1.2,
-                  ),
-                ),
-                SizedBox(height: isMobile ? 8.0 : 24.0),
-                if (!isMobile)
-                  Text(
-                    'RamaDBK is a premier vehicle exporter, bringing high-quality automobiles to customers worldwide with trust and efficiency.',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: isSmallScreen ? 14.0 : (isMobile ? 15.0 : 18.0),
-                      height: 1.4,
-                    ),
-                  ),
-              ],
+            child: const Text(
+              'Explore our extensive collection of premium vehicles. From luxury cars to reliable commercial vehicles, find exactly what you need.',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white70,
+                height: 1.6,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

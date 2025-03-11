@@ -94,18 +94,36 @@ class _FilterComponentState extends State<FilterComponent> {
   }
 
   void _searchResults() {
-    // Call the filter callback with current values
+    // Process engine value if needed (remove "cc" text)
+    String? engineValue = dropdownValues['Select Engine CC'];
+    if (engineValue != null) {
+      // Keep only numeric part if engine has "cc" suffix
+      engineValue = engineValue.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    
+    // Process year values to ensure they're just numbers
+    String? yearFrom = dropdownValues['Year From'];
+    if (yearFrom != null) {
+      yearFrom = yearFrom.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    
+    String? yearTo = dropdownValues['Year To'];
+    if (yearTo != null) {
+      yearTo = yearTo.replaceAll(RegExp(r'[^0-9]'), '');
+    }
+    
+    // Call the filter callback with processed values
     widget.onFilterChanged(
       dropdownValues['Brands'],
       dropdownValues['All Models'],
       dropdownValues['Steering'],
-      dropdownValues['Year From'],
-      dropdownValues['Year To'],
+      yearFrom,
+      yearTo,
       dropdownValues['Price From'],
       dropdownValues['Price To'],
       dropdownValues['All Type'],
       dropdownValues['All Body Type'],
-      dropdownValues['Select Engine CC'],
+      engineValue,
       dropdownValues['Transmission'],
       dropdownValues['2WD/4WD'],
       dropdownValues['All Fuel'],

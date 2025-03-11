@@ -47,10 +47,17 @@ class _NavBarState extends State<NavBar> {
         ],
       ),
       child: SafeArea(
-        child:
-            isMobile
-                ? _buildMobileNavBar(context)
-                : _buildDesktopNavBar(context),
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 16.0 : 24.0,
+            vertical: isMobile ? 8.0 : 0.0,
+          ),
+          child:
+              isMobile
+                  ? _buildMobileNavBar(context)
+                  : _buildDesktopNavBar(context),
+        ),
       ),
     );
   }
