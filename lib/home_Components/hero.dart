@@ -86,7 +86,7 @@ class _HeroSectionState extends State<HeroSection>
 
     return SizedBox(
       // Use up to 90% of the screen height
-      height: size.height * 0.9,
+      height: size.height * 1.0,
       width: double.infinity,
       child: Stack(
         children: [

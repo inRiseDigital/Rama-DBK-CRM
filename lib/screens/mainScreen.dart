@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rama_dbk_crm/screens/serviceScreen.dart';
 import 'package:rama_dbk_crm/screens/sparePartsScreen.dart';
 import 'package:rama_dbk_crm/screens/stockScreen.dart';
 import 'homeScreen.dart';
@@ -20,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     const HomeScreen(),
     const StockScreen(),
     const SparePartsScreen(),
-    const Center(child: Text('Services Screen')),
+    const ServiceScreen(),
     const AboutScreen(), // Index 4 for About Us
     const Center(child: Text('Contact Screen')), // Index 5 for Contacts
   ];

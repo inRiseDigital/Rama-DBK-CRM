@@ -15,7 +15,7 @@ class AboutHeroComponent extends StatelessWidget {
       children: [
         // Background Image
         Container(
-          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 0.75,
+          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 1.0,
           width: double.infinity,
           decoration: BoxDecoration(
             image: const DecorationImage(
@@ -26,7 +26,7 @@ class AboutHeroComponent extends StatelessWidget {
         ),
         // Dark Overlay for readability
         Container(
-          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 0.75,
+          height: isMobile ? screenSize.height * 0.6 : screenSize.height * 1.0,
           width: double.infinity,
           color: Colors.black.withOpacity(0.5),
         ),

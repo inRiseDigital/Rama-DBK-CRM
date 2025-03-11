@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
 
 class FilterComponent extends StatefulWidget {
-  const FilterComponent({super.key});
+  final Function(
+    String? brand,
+    String? model,
+    String? steering,
+    String? yearFrom,
+    String? yearTo,
+    String? priceFrom,
+    String? priceTo,
+    String? type,
+    String? bodyType,
+    String? engine,
+    String? transmission,
+    String? drive,
+    String? fuel,
+    String? country,
+    String? stockNumber,
+    String? search,
+    Map<String, bool>? tags,
+  )
+  onFilterChanged;
+
+  const FilterComponent({Key? key, required this.onFilterChanged})
+    : super(key: key);
 
   @override
   State<FilterComponent> createState() => _FilterComponentState();
@@ -48,153 +70,375 @@ class _FilterComponentState extends State<FilterComponent> {
       stockNumberController.clear();
       searchTextController.clear();
     });
+
+    // Trigger filter with reset values
+    widget.onFilterChanged(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      '',
+      '',
+      checkboxValues,
+    );
   }
 
   void _searchResults() {
-    // Implement search functionality here
-    print('Search triggered with filters:');
-    print('Dropdown values: $dropdownValues');
-    print('Checkbox values: $checkboxValues');
-    print('Stock numbers: ${stockNumberController.text}');
-    print('Search text: ${searchTextController.text}');
+    // Call the filter callback with current values
+    widget.onFilterChanged(
+      dropdownValues['Brands'],
+      dropdownValues['All Models'],
+      dropdownValues['Steering'],
+      dropdownValues['Year From'],
+      dropdownValues['Year To'],
+      dropdownValues['Price From'],
+      dropdownValues['Price To'],
+      dropdownValues['All Type'],
+      dropdownValues['All Body Type'],
+      dropdownValues['Select Engine CC'],
+      dropdownValues['Transmission'],
+      dropdownValues['2WD/4WD'],
+      dropdownValues['All Fuel'],
+      dropdownValues['Select Country'],
+      stockNumberController.text,
+      searchTextController.text,
+      checkboxValues,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      // Added Center widget here
-      child: Container(
-        padding: const EdgeInsets.all(24.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
-              blurRadius: 20,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Added this
-          crossAxisAlignment: CrossAxisAlignment.center, // Changed to center
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center, // Added this
-                children: [
-                  const Text(
-                    'Advanced Search',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.3,
-                      color: Color(0xFF2D3142),
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: _resetFilters,
-                    icon: const Icon(
-                      Icons.refresh_rounded,
-                      color: Color(0xFF4F5D75),
-                    ),
-                    tooltip: 'Reset Filters',
-                  ),
-                ],
+    final screenSize = MediaQuery.of(context).size;
+    final bool isMobile = screenSize.width < 768;
+    final bool isSmallScreen = screenSize.width < 360;
+    final double containerPadding = isMobile ? 16.0 : 24.0;
+    final double inputWidth =
+        isMobile
+            ? (isSmallScreen ? screenSize.width * 0.9 : screenSize.width * 0.95)
+            : 200.0;
+
+    if (!isMobile) {
+      return _buildFullFilterView(
+        context,
+        containerPadding,
+        inputWidth,
+        isMobile,
+        isSmallScreen,
+      );
+    }
+
+    return Column(
+      children: [
+        // Filter Button for Mobile
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: ElevatedButton(
+            onPressed: () => _showFilterBottomSheet(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: const Color(0xFF2D3142),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.grey.shade300),
               ),
+              elevation: 2,
             ),
-            Wrap(
-              spacing: 16.0,
-              runSpacing: 16.0,
-              alignment: WrapAlignment.center, // Changed to center
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildDropdown("Brands", ["Toyota", "Nissan", "Honda"]),
-                _buildDropdown("All Models", ["Model A", "Model B", "Model C"]),
-                _buildDropdown("Steering", ["Left", "Right"]),
-                _buildDropdown("Year From", ["2010", "2015", "2020"]),
-                _buildDropdown("Year To", ["2022", "2023", "2024"]),
-                _buildDropdown("Price From", [
-                  "10,000 USD",
-                  "20,000 USD",
-                  "30,000 USD",
-                ]),
-                _buildDropdown("Price To", [
-                  "40,000 USD",
-                  "50,000 USD",
-                  "60,000 USD",
-                ]),
-                _buildDropdown("All Type", ["SUV", "Sedan", "Truck"]),
-                _buildDropdown("All Body Type", [
-                  "Coupe",
-                  "Hatchback",
-                  "Convertible",
-                ]),
-                _buildDropdown("Select Engine CC", [
-                  "1500cc",
-                  "2000cc",
-                  "2500cc",
-                ]),
-                _buildDropdown("Transmission", ["Manual", "Automatic"]),
-                _buildDropdown("2WD/4WD", ["2WD", "4WD"]),
-                _buildDropdown("All Fuel", ["Petrol", "Diesel", "Hybrid"]),
-                _buildDropdown("Select Country", ["Japan", "USA", "UK"]),
-                _buildTextField(
-                  "Multiple Stock Number by Comma (,)",
-                  controller: stockNumberController,
-                  width: 280,
-                  icon: Icons.format_list_numbered,
+                Row(
+                  children: [
+                    Icon(
+                      Icons.filter_list,
+                      color: Colors.red.shade800,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Filter Vehicles',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-                _buildTextField(
-                  "Search for Make, Model, Chassis, Stock Number etc",
-                  controller: searchTextController,
-                  width: 280,
-                  icon: Icons.search,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade800,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${dropdownValues.values.where((v) => v != null).length}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Wrap(
-                spacing: 18.0,
-                runSpacing: 10.0,
-                alignment: WrapAlignment.center, // Changed to center
-                children: [
-                  _buildChip("Used"),
-                  _buildChip("Brand New"),
-                  _buildChip("Hot Offers"),
-                  _buildChip("Recommended"),
-                  _buildChip("Clearance Sale"),
-                  _buildChip("New Arrival"),
-                  _buildChip("Permitted"),
-                  _buildChip("Dealer Stock"),
-                ],
-              ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFilterBottomSheet(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final bool isSmallScreen = screenSize.width < 360;
+    final double inputWidth =
+        isSmallScreen ? screenSize.width * 0.9 : screenSize.width * 0.95;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder:
+          (context) => Container(
+            height: screenSize.height * 0.9,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Center(
-                child: _buildButton(
-                  "Search",
-                  Colors.red,
-                  Colors.white,
-                  icon: Icons.search,
-                  onPressed: _searchResults,
+            child: Column(
+              children: [
+                // Handle bar
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                // Filter content
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: _buildFullFilterView(
+                      context,
+                      16.0,
+                      inputWidth,
+                      true,
+                      isSmallScreen,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+    );
+  }
+
+  Widget _buildFullFilterView(
+    BuildContext context,
+    double containerPadding,
+    double inputWidth,
+    bool isMobile,
+    bool isSmallScreen,
+  ) {
+    return SafeArea(
+      child: Center(
+        child: Container(
+          padding: EdgeInsets.all(containerPadding),
+          margin: EdgeInsets.symmetric(
+            horizontal: isMobile ? 8.0 : 24.0,
+            vertical: isMobile ? 16.0 : 24.0,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.08),
+                blurRadius: 20,
+                spreadRadius: 2,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: isMobile ? 16.0 : 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Advanced Search',
+                      style: TextStyle(
+                        fontSize: isMobile ? 20 : 24,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                        color: const Color(0xFF2D3142),
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        _resetFilters();
+                        if (isMobile) Navigator.pop(context);
+                      },
+                      icon: const Icon(
+                        Icons.refresh_rounded,
+                        color: Color(0xFF4F5D75),
+                      ),
+                      tooltip: 'Reset Filters',
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Wrap(
+                spacing: isMobile ? 8.0 : 16.0,
+                runSpacing: isMobile ? 8.0 : 16.0,
+                alignment: WrapAlignment.center,
+                children: [
+                  _buildDropdown("Brands", [
+                    "Toyota",
+                    "Nissan",
+                    "Honda",
+                  ], width: inputWidth),
+                  _buildDropdown("All Models", [
+                    "Model A",
+                    "Model B",
+                    "Model C",
+                  ], width: inputWidth),
+                  _buildDropdown("Steering", [
+                    "Left",
+                    "Right",
+                  ], width: inputWidth),
+                  _buildDropdown("Year From", [
+                    "2010",
+                    "2015",
+                    "2020",
+                  ], width: inputWidth),
+                  _buildDropdown("Year To", [
+                    "2022",
+                    "2023",
+                    "2024",
+                  ], width: inputWidth),
+                  _buildDropdown("Price From", [
+                    "10,000 USD",
+                    "20,000 USD",
+                    "30,000 USD",
+                  ], width: inputWidth),
+                  _buildDropdown("Price To", [
+                    "40,000 USD",
+                    "50,000 USD",
+                    "60,000 USD",
+                  ], width: inputWidth),
+                  _buildDropdown("All Type", [
+                    "SUV",
+                    "Sedan",
+                    "Truck",
+                  ], width: inputWidth),
+                  _buildDropdown("All Body Type", [
+                    "Coupe",
+                    "Hatchback",
+                    "Convertible",
+                  ], width: inputWidth),
+                  _buildDropdown("Select Engine CC", [
+                    "1500cc",
+                    "2000cc",
+                    "2500cc",
+                  ], width: inputWidth),
+                  _buildDropdown("Transmission", [
+                    "Manual",
+                    "Automatic",
+                  ], width: inputWidth),
+                  _buildDropdown("2WD/4WD", ["2WD", "4WD"], width: inputWidth),
+                  _buildDropdown("All Fuel", [
+                    "Petrol",
+                    "Diesel",
+                    "Hybrid",
+                  ], width: inputWidth),
+                  _buildDropdown("Select Country", [
+                    "Japan",
+                    "USA",
+                    "UK",
+                  ], width: inputWidth),
+                  _buildTextField(
+                    "Multiple Stock Number by Comma (,)",
+                    controller: stockNumberController,
+                    width: inputWidth,
+                    icon: Icons.format_list_numbered,
+                  ),
+                  _buildTextField(
+                    "Search for Make, Model, Chassis, Stock Number etc",
+                    controller: searchTextController,
+                    width: inputWidth,
+                    icon: Icons.search,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: isMobile ? 16.0 : 20.0),
+                child: Wrap(
+                  spacing: isMobile ? 8.0 : 18.0,
+                  runSpacing: isMobile ? 8.0 : 10.0,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _buildChip("Used"),
+                    _buildChip("Brand New"),
+                    _buildChip("Hot Offers"),
+                    _buildChip("Recommended"),
+                    _buildChip("Clearance Sale"),
+                    _buildChip("New Arrival"),
+                    _buildChip("Permitted"),
+                    _buildChip("Dealer Stock"),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: isMobile ? 8.0 : 10.0),
+                child: Center(
+                  child: _buildButton(
+                    "Apply Filters",
+                    Colors.red,
+                    Colors.white,
+                    icon: Icons.search,
+                    onPressed: () {
+                      _searchResults();
+                      if (isMobile) Navigator.pop(context);
+                    },
+                    isMobile: isMobile,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDropdown(String hint, List<String> items) {
+  Widget _buildDropdown(
+    String hint,
+    List<String> items, {
+    required double width,
+  }) {
     return SizedBox(
-      width: 200,
+      width: width,
       child: DropdownButtonFormField<String>(
         value: dropdownValues[hint],
         decoration: InputDecoration(
@@ -346,12 +590,16 @@ class _FilterComponentState extends State<FilterComponent> {
     Color textColor, {
     required VoidCallback onPressed,
     IconData? icon,
+    bool isMobile = false,
   }) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 24 : 32,
+          vertical: isMobile ? 12 : 16,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 0,
       ),
@@ -359,15 +607,15 @@ class _FilterComponentState extends State<FilterComponent> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, color: textColor, size: 20),
-            const SizedBox(width: 8),
+            Icon(icon, color: textColor, size: isMobile ? 18 : 20),
+            SizedBox(width: isMobile ? 6 : 8),
           ],
           Text(
             text,
             style: TextStyle(
               color: textColor,
               fontWeight: FontWeight.w600,
-              fontSize: 15,
+              fontSize: isMobile ? 14 : 15,
               letterSpacing: 0.5,
             ),
           ),

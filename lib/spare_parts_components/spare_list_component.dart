@@ -214,6 +214,9 @@ class _SpareListComponentState extends State<SpareListComponent>
                   border: InputBorder.none,
                   hintStyle: const TextStyle(color: Colors.black54),
                 ),
+                style: const TextStyle(
+                  color: Colors.black,
+                ), // Set text color to black
               ),
             ),
             // "Search" button
@@ -272,10 +275,10 @@ class _SpareListComponentState extends State<SpareListComponent>
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         width: 200,
+        height: 320, // Fixed height for all cards
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          // subtle shadow
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,
@@ -289,16 +292,14 @@ class _SpareListComponentState extends State<SpareListComponent>
           borderRadius: BorderRadius.circular(12),
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
-            // onTap could open a details page or do something else
             onTap: () {
               // TODO: Navigate to details or show a popup
             },
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                // Image Section or placeholder
-                AspectRatio(
-                  aspectRatio: 1.0,
+                // Image Section with fixed height
+                SizedBox(
+                  height: 160, // Fixed height for image section
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.vertical(
@@ -327,53 +328,54 @@ class _SpareListComponentState extends State<SpareListComponent>
                 ),
                 const SizedBox(height: 12),
 
-                /// Title
+                // Content section with fixed padding
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    item["title"] ?? "",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 4),
-
-                /// Code
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    "Code : ${item["code"] ?? ""}",
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
-                  ),
-                ),
-                const SizedBox(height: 4),
-
-                /// Status
-                if (item["status"] != null && item["status"].isNotEmpty)
-                  Text(
-                    item["status"],
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.green,
-                    ),
-                  ),
-                const SizedBox(height: 4),
-
-                /// Price
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(
-                    "${item["price"]} JPY",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 40, // Fixed height for title
+                        child: Text(
+                          item["title"] ?? "",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Code : ${item["code"] ?? ""}",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      if (item["status"] != null && item["status"].isNotEmpty)
+                        Text(
+                          item["status"],
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.green,
+                          ),
+                        ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "${item["price"]} JPY",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
