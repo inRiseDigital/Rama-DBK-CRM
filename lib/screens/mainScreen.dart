@@ -4,6 +4,7 @@ import 'package:rama_dbk_crm/screens/sparePartsScreen.dart';
 import 'package:rama_dbk_crm/screens/stockScreen.dart';
 import 'homeScreen.dart';
 import 'aboutScreen.dart';
+import 'contactScreen.dart';
 import '../widgets/navbar.dart';
 import '../widgets/footer.dart';
 
@@ -23,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
     const SparePartsScreen(),
     const ServiceScreen(),
     const AboutScreen(), // Index 4 for About Us
-    const Center(child: Text('Contact Screen')), // Index 5 for Contacts
+    const ContactScreen(), // Index 5 for Contacts
   ];
 
   @override
