@@ -1,31 +1,131 @@
 import 'package:flutter/material.dart';
 
-/// A responsive navigation bar that adapts between desktop and mobile layouts.
-/// Handles navigation state and user interactions for the main app navigation.
-class NavBar extends StatefulWidget {
-  /// The index of the currently selected navigation item
-  final int selectedIndex;
+void main() {
+  runApp(const MyApp());
+}
 
-  /// Callback function when a navigation item is selected
+/// The root widget for the app.
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'NavBar Demo',
+      debugShowCheckedModeBanner: false,
+      home: HomePage(),
+    );
+  }
+}
+
+/// A sample home page that uses the custom NavBar.
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int selectedIndex = 0;
+
+  void onNavItemSelected(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
+  void onDropdownItemSelected(String route) {
+    // For demonstration purposes, we'll show a snackbar.
+    // In a real app you might use Navigator.pushNamed(context, route);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Navigating to $route')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          NavBar(
+            selectedIndex: selectedIndex,
+            onItemSelected: onNavItemSelected,
+            onDropdownItemSelected: onDropdownItemSelected,
+          ),
+          Expanded(
+            child: Center(
+              child: Text(
+                'Selected index: $selectedIndex',
+                style: const TextStyle(fontSize: 24),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A custom navigation bar widget that supports desktop and mobile layouts,
+/// including dropdown menus that remain open when hovering.
+class NavBar extends StatefulWidget {
+  final int selectedIndex;
   final Function(int) onItemSelected;
+  final Function(String)? onDropdownItemSelected;
 
   const NavBar({
-    super.key,
+    Key? key,
     required this.selectedIndex,
     required this.onItemSelected,
-  });
+    this.onDropdownItemSelected,
+  }) : super(key: key);
 
   @override
   State<NavBar> createState() => _NavBarState();
 }
 
 class _NavBarState extends State<NavBar> {
-  /// Tracks which navigation item is currently being hovered
   int? hoveredIndex;
+  bool isSparePartsDropdownOpen = false;
+  bool isAboutUsDropdownOpen = false;
 
-  // Constants for responsive breakpoints
+  // Flags to know if the cursor is over the dropdown content.
+  bool isSparePartsDropdownHovered = false;
+  bool isAboutUsDropdownHovered = false;
+
   static const double _mobileBreakpoint = 768;
-  static const double _navbarHeight = 70;
+  static const double _navbarHeight = 80;
+  static const double _logoHeight = 60;
+
+  final List<Map<String, dynamic>> _sparePartsItems = [
+    {
+      'title': 'Auto Parts & Accessories',
+      'route': '/spare-parts/auto-parts',
+    },
+    {
+      'title': 'Order Now',
+      'route': '/spare-parts/order',
+    },
+  ];
+
+  final List<Map<String, dynamic>> _aboutUsItems = [
+    {
+      'title': 'Company Overview',
+      'route': '/about/overview',
+    },
+    {
+      'title': 'Our Team',
+      'route': '/about/team',
+    },
+    {
+      'title': 'Mission & Vision',
+      'route': '/about/mission',
+    },
+    {
+      'title': 'Our History',
+      'route': '/about/history',
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -33,16 +133,9 @@ class _NavBarState extends State<NavBar> {
 
     return Container(
       height: isMobile ? null : _navbarHeight,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.black.withOpacity(0.95),
-            Colors.black.withOpacity(0.85),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-        boxShadow: const [
+      decoration: const BoxDecoration(
+        color: Colors.black,
+        boxShadow: [
           BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
@@ -53,16 +146,17 @@ class _NavBarState extends State<NavBar> {
             horizontal: isMobile ? 16.0 : 24.0,
             vertical: isMobile ? 8.0 : 0.0,
           ),
-          child:
-              isMobile
-                  ? _buildMobileNavBar(context)
-                  : _buildDesktopNavBar(context),
+          child: isMobile
+              ? _buildMobileNavBar(context)
+              : _buildDesktopNavBar(context),
         ),
       ),
     );
   }
 
-  /// Builds the desktop version of the navigation bar
+  // ========================
+  // DESKTOP NAVBAR
+  // ========================
   Widget _buildDesktopNavBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
@@ -73,16 +167,16 @@ class _NavBarState extends State<NavBar> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildNavItem(0, 'Home', false),
-              const SizedBox(width: 20),
-              _buildNavItem(1, 'Stock List', false),
-              const SizedBox(width: 20),
-              _buildNavItem(2, 'Spare Parts', true),
-              const SizedBox(width: 20),
-              _buildNavItem(3, 'Our Services', true),
-              const SizedBox(width: 20),
-              _buildNavItem(4, 'About Us', true),
-              const SizedBox(width: 20),
+              _buildNavItem(0, 'Home'),
+              const SizedBox(width: 32),
+              _buildNavItem(1, 'Stock List'),
+              const SizedBox(width: 32),
+              _buildSparePartsDropdown(2),
+              const SizedBox(width: 32),
+              _buildNavItem(3, 'Our Services'),
+              const SizedBox(width: 32),
+              _buildAboutUsDropdown(4),
+              const SizedBox(width: 32),
               _buildContactButton(5),
             ],
           ),
@@ -91,7 +185,562 @@ class _NavBarState extends State<NavBar> {
     );
   }
 
-  /// Builds the mobile version of the navigation bar with hamburger menu
+  Widget _buildLogo() {
+    return SizedBox(
+      height: _logoHeight,
+      child: Image.asset(
+        'assets/images/Rama_logo.png',
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => Container(
+          width: _logoHeight,
+          height: _logoHeight,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.red.shade800, Colors.red.shade600],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withOpacity(0.5),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Text(
+              'R',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, String title) {
+    final bool isSelected = widget.selectedIndex == index;
+    final bool isHovered = hoveredIndex == index;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => hoveredIndex = index),
+      onExit: (_) => setState(() => hoveredIndex = null),
+      child: InkWell(
+        onTap: () => widget.onItemSelected(index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 28.0),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected
+                    ? Colors.white
+                    : (isHovered ? Colors.white70 : Colors.transparent),
+                width: 2,
+              ),
+            ),
+          ),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: isSelected || isHovered
+                  ? Colors.white
+                  : Colors.white.withOpacity(0.8),
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              letterSpacing: 0.5,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ------------------------
+  /// Spare Parts Dropdown (Desktop)
+  /// ------------------------
+  Widget _buildSparePartsDropdown(int index) {
+    final bool isSelected = widget.selectedIndex == index;
+    final bool isLabelHovered = hoveredIndex == index;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // The "Spare Parts" label
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) {
+            setState(() {
+              hoveredIndex = index;
+              isSparePartsDropdownOpen = true;
+              // Close other dropdown if open
+              isAboutUsDropdownOpen = false;
+            });
+          },
+          onExit: (_) {
+            // Only close if we're not hovering the dropdown content
+            if (!isSparePartsDropdownHovered) {
+              setState(() {
+                hoveredIndex = null;
+                isSparePartsDropdownOpen = false;
+              });
+            }
+          },
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => widget.onItemSelected(index),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 28.0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isSelected
+                          ? Colors.white
+                          : (isLabelHovered
+                              ? Colors.white70
+                              : Colors.transparent),
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'Spare Parts',
+                      style: TextStyle(
+                        color: isSelected || isLabelHovered
+                            ? Colors.white
+                            : Colors.white.withOpacity(0.8),
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        letterSpacing: 0.5,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      isSparePartsDropdownOpen
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: isSelected || isLabelHovered
+                          ? Colors.white
+                          : Colors.white70,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        // The dropdown content
+        if (isSparePartsDropdownOpen)
+          Positioned(
+            top: _navbarHeight - 2,
+            left: 0,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              onEnter: (_) {
+                setState(() {
+                  isSparePartsDropdownHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  isSparePartsDropdownHovered = false;
+                  // Only close if we're not hovering the main item
+                  if (hoveredIndex != index) {
+                    isSparePartsDropdownOpen = false;
+                  }
+                });
+              },
+              child: Material(
+                color: Colors.transparent,
+                elevation: 8,
+                borderRadius: BorderRadius.circular(12),
+                child: _buildSparePartsDropdownMenu(),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSparePartsDropdownMenu() {
+    return Container(
+      width: 280,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF2A2A2A),
+            Color(0xFF1A1A1A),
+            Colors.black,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.red.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.red.withOpacity(0.1),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Colors.red.shade800, Colors.red.shade600],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.settings,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'Spare Parts Menu',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ..._sparePartsItems.map(_buildDropdownItem).toList(),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// ------------------------
+  /// About Us Dropdown (Desktop)
+  /// ------------------------
+  Widget _buildAboutUsDropdown(int index) {
+    final bool isSelected = widget.selectedIndex == index;
+    final bool isLabelHovered = hoveredIndex == index;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // The "About Us" label
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) {
+            setState(() {
+              hoveredIndex = index;
+              isAboutUsDropdownOpen = true;
+              // Close other dropdown if open
+              isSparePartsDropdownOpen = false;
+            });
+          },
+          onExit: (_) {
+            // Only close if we're not hovering the dropdown content
+            if (!isAboutUsDropdownHovered) {
+              setState(() {
+                hoveredIndex = null;
+                isAboutUsDropdownOpen = false;
+              });
+            }
+          },
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => widget.onItemSelected(index),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 28.0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isSelected
+                          ? Colors.white
+                          : (isLabelHovered
+                              ? Colors.white70
+                              : Colors.transparent),
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'About Us',
+                      style: TextStyle(
+                        color: isSelected || isLabelHovered
+                            ? Colors.white
+                            : Colors.white.withOpacity(0.8),
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        letterSpacing: 0.5,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      isAboutUsDropdownOpen
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: isSelected || isLabelHovered
+                          ? Colors.white
+                          : Colors.white70,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        // The dropdown content
+        if (isAboutUsDropdownOpen)
+          Positioned(
+            top: _navbarHeight - 2,
+            left: 0,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              onEnter: (_) {
+                setState(() {
+                  isAboutUsDropdownHovered = true;
+                });
+              },
+              onExit: (_) {
+                setState(() {
+                  isAboutUsDropdownHovered = false;
+                  // Only close if we're not hovering the main item
+                  if (hoveredIndex != index) {
+                    isAboutUsDropdownOpen = false;
+                  }
+                });
+              },
+              child: Material(
+                color: Colors.transparent,
+                elevation: 8,
+                borderRadius: BorderRadius.circular(12),
+                child: _buildAboutUsDropdownMenu(),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildAboutUsDropdownMenu() {
+    return Container(
+      width: 280,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF2A2A2A),
+            Color(0xFF1A1A1A),
+            Colors.black,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.red.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.red.withOpacity(0.1),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Colors.red.shade800, Colors.red.shade600],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.business,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    'About Us Menu',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ..._aboutUsItems.map(_buildDropdownItem).toList(),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// ------------------------
+  /// DROPDOWN ITEM (for both dropdowns)
+  /// ------------------------
+  Widget _buildDropdownItem(Map<String, dynamic> item) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: InkWell(
+        onTap: () {
+          if (widget.onDropdownItemSelected != null) {
+            widget.onDropdownItemSelected!(item['route']);
+          }
+          setState(() {
+            isSparePartsDropdownOpen = false;
+            isAboutUsDropdownOpen = false;
+          });
+        },
+        hoverColor: Colors.red.withOpacity(0.1),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.red.withOpacity(0.1),
+                width: 1,
+              ),
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.chevron_right,
+                color: Colors.redAccent,
+                size: 18,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  item['title'],
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ------------------------
+  /// CONTACT BUTTON (Desktop)
+  /// ------------------------
+  Widget _buildContactButton(int index) {
+    final bool isHovered = hoveredIndex == index;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => hoveredIndex = index),
+      onExit: (_) => setState(() => hoveredIndex = null),
+      child: InkWell(
+        onTap: () => widget.onItemSelected(index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          decoration: BoxDecoration(
+            color: isHovered ? Colors.red.shade700 : Colors.red.shade600,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.red.withOpacity(isHovered ? 0.4 : 0.3),
+                blurRadius: isHovered ? 12 : 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.phone,
+                color: Colors.white,
+                size: 18,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Contacts',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ========================
+  // MOBILE NAVBAR
+  // ========================
   Widget _buildMobileNavBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -108,165 +757,16 @@ class _NavBarState extends State<NavBar> {
     );
   }
 
-  /// Builds the company logo with fallback to letter 'R' if image fails to load
-  Widget _buildLogo() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Container(
-        height: 50,
-        decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 10,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Image.asset(
-          'assets/images/Rama_logo.png',
-          errorBuilder:
-              (context, error, stackTrace) => Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.red.shade800, Colors.red.shade600],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.red.withOpacity(0.5),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    'R',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                    ),
-                  ),
-                ),
-              ),
-        ),
-      ),
-    );
-  }
-
-  /// Builds a navigation item for the desktop view
-  Widget _buildNavItem(int index, String title, bool hasDropdown) {
-    final bool isSelected = widget.selectedIndex == index;
-    final bool isHovered = hoveredIndex == index;
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => hoveredIndex = index),
-      onExit: (_) => setState(() => hoveredIndex = null),
-      child: InkWell(
-        onTap: () => widget.onItemSelected(index),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-          padding: const EdgeInsets.symmetric(vertical: 24.0),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color:
-                    isSelected
-                        ? Colors.white
-                        : (isHovered ? Colors.white70 : Colors.transparent),
-                width: 2,
-              ),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color:
-                      isSelected || isHovered
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.8),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  letterSpacing: 0.5,
-                  fontSize: 15,
-                ),
-              ),
-              if (hasDropdown)
-                Padding(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  child: Icon(
-                    Icons.keyboard_arrow_down,
-                    color:
-                        isSelected || isHovered ? Colors.white : Colors.white70,
-                    size: 16,
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Builds the contact button for the desktop view
-  Widget _buildContactButton(int index) {
-    final bool isHovered = hoveredIndex == index;
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => hoveredIndex = index),
-      onExit: (_) => setState(() => hoveredIndex = null),
-      child: InkWell(
-        onTap: () => widget.onItemSelected(index),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: isHovered ? Colors.red.shade700 : Colors.red.shade600,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.red.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: const Text(
-            'Contacts',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 15,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Shows the mobile menu as a bottom sheet
   void _showMobileMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (BuildContext bottomSheetContext) =>
-              _buildMobileMenuContent(bottomSheetContext),
+      builder: (BuildContext bottomSheetContext) =>
+          _buildMobileMenuContent(bottomSheetContext),
     );
   }
 
-  /// Builds the content of the mobile menu
   Widget _buildMobileMenuContent(BuildContext bottomSheetContext) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
@@ -293,7 +793,6 @@ class _NavBarState extends State<NavBar> {
     );
   }
 
-  /// Builds the header of the mobile menu
   Widget _buildMobileMenuHeader(BuildContext bottomSheetContext) {
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -324,28 +823,25 @@ class _NavBarState extends State<NavBar> {
     );
   }
 
-  /// Builds the list of menu items for the mobile view
   Widget _buildMobileMenuItems(BuildContext bottomSheetContext) {
     return ListView(
       children: [
         const SizedBox(height: 8),
-        _buildMobileMenuItem(bottomSheetContext, 0, 'Home', false),
-        _buildMobileMenuItem(bottomSheetContext, 1, 'Stock List', false),
-        _buildMobileMenuItem(bottomSheetContext, 2, 'Spare Parts', true),
-        _buildMobileMenuItem(bottomSheetContext, 3, 'Our Services', true),
-        _buildMobileMenuItem(bottomSheetContext, 4, 'About Us', true),
+        _buildMobileMenuItem(bottomSheetContext, 0, 'Home'),
+        _buildMobileMenuItem(bottomSheetContext, 1, 'Stock List'),
+        _buildMobileSparePartsMenu(bottomSheetContext),
+        _buildMobileMenuItem(bottomSheetContext, 3, 'Our Services'),
+        _buildMobileAboutUsMenu(bottomSheetContext),
         _buildMobileContactItem(bottomSheetContext, 5),
         const Divider(thickness: 1),
       ],
     );
   }
 
-  /// Builds a mobile menu item
   Widget _buildMobileMenuItem(
     BuildContext bottomSheetContext,
     int index,
     String title,
-    bool hasDropdown,
   ) {
     final bool isSelected = widget.selectedIndex == index;
     return InkWell(
@@ -371,58 +867,129 @@ class _NavBarState extends State<NavBar> {
                 fontSize: 16,
               ),
             ),
-            if (hasDropdown)
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color:
-                      isSelected
-                          ? Colors.red.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 12,
-                  color: isSelected ? Colors.red.shade700 : Colors.black54,
-                ),
-              ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 12,
+              color: isSelected ? Colors.red.shade700 : Colors.black54,
+            ),
           ],
         ),
       ),
     );
   }
 
-  /// Builds the contact button for the mobile menu
-  Widget _buildMobileContactItem(BuildContext bottomSheetContext, int index) {
+  Widget _buildMobileSparePartsMenu(BuildContext bottomSheetContext) {
+    return Column(
+      children: [
+        _buildMobileMenuItem(bottomSheetContext, 2, 'Spare Parts'),
+        ..._sparePartsItems
+            .map((item) => _buildMobileSubMenuItem(bottomSheetContext, item))
+            .toList(),
+      ],
+    );
+  }
+
+  Widget _buildMobileAboutUsMenu(BuildContext bottomSheetContext) {
+    return Column(
+      children: [
+        _buildMobileMenuItem(bottomSheetContext, 4, 'About Us'),
+        ..._aboutUsItems
+            .map((item) => _buildMobileSubMenuItem(bottomSheetContext, item))
+            .toList(),
+      ],
+    );
+  }
+
+  Widget _buildMobileSubMenuItem(
+      BuildContext bottomSheetContext, Map<String, dynamic> item) {
     return InkWell(
       onTap: () {
-        widget.onItemSelected(index);
+        if (widget.onDropdownItemSelected != null) {
+          widget.onDropdownItemSelected!(item['route']);
+        }
         Navigator.pop(bottomSheetContext);
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        margin: const EdgeInsets.only(
+            left: 40.0, right: 16.0, top: 4.0, bottom: 4.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
         decoration: BoxDecoration(
-          color: Colors.red.shade600,
-          borderRadius: BorderRadius.circular(12),
+          gradient: const LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color(0xFF2A2A2A),
+              Color(0xFF1A1A1A),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Colors.red.withOpacity(0.2),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.3),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: const Center(
-          child: Text(
-            'Contacts',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+        child: Row(
+          children: [
+            const Icon(
+              Icons.chevron_right,
+              color: Colors.redAccent,
+              size: 16,
             ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                item['title'],
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileContactItem(BuildContext bottomSheetContext, int index) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: ElevatedButton(
+        onPressed: () {
+          widget.onItemSelected(index);
+          Navigator.pop(bottomSheetContext);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red.shade600,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
+          elevation: 4,
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.phone, size: 20),
+            SizedBox(width: 8),
+            Text(
+              'Contacts',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+          ],
         ),
       ),
     );

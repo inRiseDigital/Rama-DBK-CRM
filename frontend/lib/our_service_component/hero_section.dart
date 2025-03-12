@@ -9,10 +9,10 @@ class ServiceHeroSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [const Color(0xFF2D3748), const Color(0xFF1A202C)],
+          colors: [Color(0xFF2D3748), Color(0xFF1A202C)],
         ),
         borderRadius: BorderRadius.circular(16),
       ),

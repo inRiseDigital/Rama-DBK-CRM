@@ -267,21 +267,21 @@ class _HeroSectionState extends State<HeroSection>
             child: ElevatedButton(
               onPressed: () {},
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (states) => states.contains(MaterialState.hovered)
+                backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                  (states) => states.contains(WidgetState.hovered)
                       ? color.withOpacity(0.8)
                       : color,
                 ),
-                elevation: MaterialStateProperty.resolveWith<double>(
-                  (states) => states.contains(MaterialState.hovered) ? 6 : 3,
+                elevation: WidgetStateProperty.resolveWith<double>(
+                  (states) => states.contains(WidgetState.hovered) ? 6 : 3,
                 ),
-                padding: MaterialStateProperty.all(
+                padding: WidgetStateProperty.all(
                   EdgeInsets.symmetric(
                     horizontal: isSmallPhone ? 16 : (isMobile ? 20 : 30),
                     vertical: isSmallPhone ? 10 : (isMobile ? 14 : 18),
                   ),
                 ),
-                shape: MaterialStateProperty.all(
+                shape: WidgetStateProperty.all(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

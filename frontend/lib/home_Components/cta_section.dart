@@ -32,7 +32,7 @@ class CtaSection extends StatelessWidget {
           ? Column(
               children: [
                 _buildCtaContent(),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 _buildCtaForm(),
               ],
             )
@@ -42,7 +42,7 @@ class CtaSection extends StatelessWidget {
                   flex: 5,
                   child: _buildCtaContent(),
                 ),
-                SizedBox(width: 40.0),
+                const SizedBox(width: 40.0),
                 Expanded(
                   flex: 7,
                   child: _buildCtaForm(),
@@ -65,8 +65,8 @@ class CtaSection extends StatelessWidget {
             letterSpacing: 2.0,
           ),
         ),
-        SizedBox(height: 10.0),
-        Text(
+        const SizedBox(height: 10.0),
+        const Text(
           'Schedule a Test Drive Today',
           style: TextStyle(
             color: Colors.white,
@@ -74,7 +74,7 @@ class CtaSection extends StatelessWidget {
             fontSize: 28.0,
           ),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Text(
           'Experience the thrill of driving a premium vehicle. Our team is ready to assist you in finding the perfect match for your lifestyle and preferences.',
           style: TextStyle(
@@ -83,8 +83,8 @@ class CtaSection extends StatelessWidget {
             fontSize: 16.0,
           ),
         ),
-        SizedBox(height: 20.0),
-        Row(
+        const SizedBox(height: 20.0),
+        const Row(
           children: [
             Icon(
               Icons.phone,
@@ -101,8 +101,8 @@ class CtaSection extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 10.0),
-        Row(
+        const SizedBox(height: 10.0),
+        const Row(
           children: [
             Icon(
               Icons.email,
@@ -125,7 +125,7 @@ class CtaSection extends StatelessWidget {
 
   Widget _buildCtaForm() {
     return Container(
-      padding: EdgeInsets.all(30.0),
+      padding: const EdgeInsets.all(30.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
@@ -133,45 +133,45 @@ class CtaSection extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 20.0,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Request Information',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 24.0,
             ),
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Row(
             children: [
               Expanded(
                 child: _buildFormField('First Name'),
               ),
-              SizedBox(width: 15.0),
+              const SizedBox(width: 15.0),
               Expanded(
                 child: _buildFormField('Last Name'),
               ),
             ],
           ),
-          SizedBox(height: 15.0),
+          const SizedBox(height: 15.0),
           _buildFormField('Email Address'),
-          SizedBox(height: 15.0),
+          const SizedBox(height: 15.0),
           _buildFormField('Phone Number'),
-          SizedBox(height: 15.0),
+          const SizedBox(height: 15.0),
           _buildFormField('Preferred Vehicle'),
-          SizedBox(height: 15.0),
+          const SizedBox(height: 15.0),
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(5.0),
             ),
-            child: TextField(
+            child: const TextField(
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Message',
@@ -180,7 +180,7 @@ class CtaSection extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -188,14 +188,14 @@ class CtaSection extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   vertical: 15.0,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Submit Request',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -218,7 +218,7 @@ class CtaSection extends StatelessWidget {
       child: TextField(
         decoration: InputDecoration(
           hintText: placeholder,
-          contentPadding: EdgeInsets.all(15.0),
+          contentPadding: const EdgeInsets.all(15.0),
           border: InputBorder.none,
         ),
       ),

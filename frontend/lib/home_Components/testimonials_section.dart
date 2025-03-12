@@ -42,7 +42,7 @@ class TestimonialsSection extends StatelessWidget {
 
           // Testimonials
           isMobile
-              ? Column(
+              ? const Column(
                 children: [
                   HoverTestimonialCard(
                     name: 'John Davis',
@@ -50,14 +50,14 @@ class TestimonialsSection extends StatelessWidget {
                     testimonial:
                         'Exceptional service from start to finish. RamaDBK made my car buying experience smooth and enjoyable. I couldn\'t be happier with my new luxury sedan.',
                   ),
-                  const SizedBox(height: 20.0),
+                  SizedBox(height: 20.0),
                   HoverTestimonialCard(
                     name: 'Emily Johnson',
                     title: 'Marketing Director',
                     testimonial:
                         'The team at RamaDBK went above and beyond to help me find the perfect vehicle. Their knowledge and professionalism are unmatched in the industry.',
                   ),
-                  const SizedBox(height: 20.0),
+                  SizedBox(height: 20.0),
                   HoverTestimonialCard(
                     name: 'Robert Chen',
                     title: 'Tech Entrepreneur',
@@ -66,7 +66,7 @@ class TestimonialsSection extends StatelessWidget {
                   ),
                 ],
               )
-              : Row(
+              : const Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
@@ -77,7 +77,7 @@ class TestimonialsSection extends StatelessWidget {
                           'Exceptional service from start to finish. RamaDBK made my car buying experience smooth and enjoyable. I couldn\'t be happier with my new luxury sedan.',
                     ),
                   ),
-                  const SizedBox(width: 20.0),
+                  SizedBox(width: 20.0),
                   Expanded(
                     child: HoverTestimonialCard(
                       name: 'Emily Johnson',
@@ -86,7 +86,7 @@ class TestimonialsSection extends StatelessWidget {
                           'The team at RamaDBK went above and beyond to help me find the perfect vehicle. Their knowledge and professionalism are unmatched in the industry.',
                     ),
                   ),
-                  const SizedBox(width: 20.0),
+                  SizedBox(width: 20.0),
                   Expanded(
                     child: HoverTestimonialCard(
                       name: 'Robert Chen',
@@ -154,7 +154,7 @@ class _HoverTestimonialCardState extends State<HoverTestimonialCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(Icons.format_quote, color: Colors.red, size: 40.0),
+            const Icon(Icons.format_quote, color: Colors.red, size: 40.0),
             const SizedBox(height: 20.0),
             Text(
               widget.testimonial,

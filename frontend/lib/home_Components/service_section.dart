@@ -205,9 +205,9 @@ class _HoverServiceCardState extends State<HoverServiceCard> {
                 minimumSize: const Size(0, 0),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'Learn More',
                     style: TextStyle(

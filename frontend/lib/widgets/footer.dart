@@ -54,7 +54,7 @@ class Footer extends StatelessWidget {
             errorBuilder: (context, error, stackTrace) => Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.red,
                 shape: BoxShape.circle,
               ),

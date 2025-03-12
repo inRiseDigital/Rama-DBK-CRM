@@ -16,12 +16,12 @@ class AboutScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24.0),
             width: double.infinity,
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const AboutHeroComponent(),
-                const SizedBox(height: 64),
-                const Text(
+                AboutHeroComponent(),
+                SizedBox(height: 64),
+                Text(
                   'About Us',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -31,8 +31,8 @@ class AboutScreen extends StatelessWidget {
                     letterSpacing: -1,
                   ),
                 ),
-                const SizedBox(height: 12),
-                const Text(
+                SizedBox(height: 12),
+                Text(
                   'Learn about our journey, values, and commitment to providing quality vehicles and exceptional service to our customers.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -41,12 +41,12 @@ class AboutScreen extends StatelessWidget {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 48),
-                const CompanyBackgroundSection(),
-                const SizedBox(height: 48),
-                const FactFiguresComponent(),
-                const SizedBox(height: 48),
-                const ManagementMessage(),
+                SizedBox(height: 48),
+                CompanyBackgroundSection(),
+                SizedBox(height: 48),
+                FactFiguresComponent(),
+                SizedBox(height: 48),
+                ManagementMessage(),
               ],
             ),
           ),

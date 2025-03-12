@@ -98,8 +98,8 @@ class _VehicleStockState extends State<VehicleStock> {
 
     // Red, white, and black color scheme
     final Color primaryColor = Colors.red.shade800;
-    final Color secondaryColor = Colors.black;
-    final Color backgroundColor = Colors.white;
+    const Color secondaryColor = Colors.black;
+    const Color backgroundColor = Colors.white;
 
     return Container(
       color: backgroundColor,
@@ -141,7 +141,7 @@ class _VehicleStockState extends State<VehicleStock> {
                         children: [
                           CircularProgressIndicator(color: primaryColor),
                           const SizedBox(height: 16),
-                          Text(
+                          const Text(
                             'Loading vehicles...',
                             style: TextStyle(color: secondaryColor),
                           ),
@@ -159,7 +159,7 @@ class _VehicleStockState extends State<VehicleStock> {
                             color: primaryColor,
                           ),
                           const SizedBox(height: 16),
-                          Text(
+                          const Text(
                             'Failed to load vehicles',
                             style: TextStyle(
                               fontSize: 18,
@@ -221,7 +221,7 @@ class _VehicleStockState extends State<VehicleStock> {
                           padding: const EdgeInsets.only(bottom: 16.0),
                           child: Text(
                             'Found $_totalVehicles vehicles',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: secondaryColor,
                               fontWeight: FontWeight.w500,
                             ),
@@ -415,11 +415,11 @@ class _VehicleCardState extends State<VehicleCard> {
                         decoration: BoxDecoration(
                           color: widget.primaryColor,
                           borderRadius: BorderRadius.circular(25),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               color: Colors.black26,
                               blurRadius: 4,
-                              offset: const Offset(0, 2),
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
@@ -983,7 +983,7 @@ class _VehicleCardState extends State<VehicleCard> {
                           ),
                         ),
                         child: _isLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(

@@ -14,12 +14,12 @@ class SparePartsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(24.0),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SparePartsHeroComponent(),
-                const SizedBox(height: 64),
-                const Text(
+                SparePartsHeroComponent(),
+                SizedBox(height: 64),
+                Text(
                   'Spare Parts',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -29,8 +29,8 @@ class SparePartsScreen extends StatelessWidget {
                     letterSpacing: -1,
                   ),
                 ),
-                const SizedBox(height: 12),
-                const Text(
+                SizedBox(height: 12),
+                Text(
                   'Browse our extensive collection of genuine spare parts for all vehicle makes and models. We ensure quality and compatibility for your vehicle.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -39,10 +39,10 @@ class SparePartsScreen extends StatelessWidget {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 48),
-                const SpareListComponent(),
-                const SizedBox(height: 48),
-                const SparePartsDescription(),
+                SizedBox(height: 48),
+                SpareListComponent(),
+                SizedBox(height: 48),
+                SparePartsDescription(),
               ],
             ),
           ),

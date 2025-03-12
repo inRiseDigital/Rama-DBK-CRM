@@ -155,10 +155,10 @@ class ServiceScreen extends StatelessWidget {
               children: [
                 const ServiceHeroSection(),
                 const SizedBox(height: 64),
-                Center(
+                const Center(
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Our Services',
                         style: TextStyle(
                           fontSize: 36,
@@ -167,8 +167,8 @@ class ServiceScreen extends StatelessWidget {
                           letterSpacing: -1,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
+                      SizedBox(height: 12),
+                      Text(
                         'We provide comprehensive automotive services to keep your vehicle running at its best. Our experienced technicians use state-of-the-art equipment to deliver quality service.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -190,7 +190,7 @@ class ServiceScreen extends StatelessWidget {
                       description:
                           'Regular maintenance and servicing to keep your vehicle in top condition.',
                       icon: Icons.build,
-                      features: [
+                      features: const [
                         'Regular oil and filter changes',
                         'Brake system inspection and service',
                         'Tire rotation and balancing',
@@ -205,7 +205,7 @@ class ServiceScreen extends StatelessWidget {
                       description:
                           'Advanced diagnostic services to identify and resolve vehicle issues.',
                       icon: Icons.search,
-                      features: [
+                      features: const [
                         'Computer diagnostic scanning',
                         'Engine performance testing',
                         'Electrical system diagnosis',
@@ -219,7 +219,7 @@ class ServiceScreen extends StatelessWidget {
                       description:
                           'Professional repair services for all types of vehicles.',
                       icon: Icons.car_repair,
-                      features: [
+                      features: const [
                         'Engine repairs and rebuilds',
                         'Transmission service and repair',
                         'Suspension and steering repairs',
@@ -233,7 +233,7 @@ class ServiceScreen extends StatelessWidget {
                       description:
                           'Genuine parts replacement and installation services.',
                       icon: Icons.settings,
-                      features: [
+                      features: const [
                         'Genuine OEM parts',
                         'Quality aftermarket options',
                         'Parts warranty coverage',
@@ -248,7 +248,7 @@ class ServiceScreen extends StatelessWidget {
                       description:
                           'Complete body repair and painting services.',
                       icon: Icons.format_paint,
-                      features: [
+                      features: const [
                         'Collision repair',
                         'Paint matching and refinishing',
                         'Dent removal',
@@ -262,7 +262,7 @@ class ServiceScreen extends StatelessWidget {
                       description:
                           'Quick response emergency automotive assistance.',
                       icon: Icons.emergency,
-                      features: [
+                      features: const [
                         '24/7 emergency support',
                         'Roadside assistance',
                         'Emergency repairs',

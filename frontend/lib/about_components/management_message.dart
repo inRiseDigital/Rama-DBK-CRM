@@ -56,7 +56,7 @@ class _ManagementMessageState extends State<ManagementMessage>
   Widget _buildTitleSection() {
     return Column(
       children: [
-        Text(
+        const Text(
           "Message from the Management",
           style: TextStyle(
             fontSize: 32,
@@ -67,7 +67,7 @@ class _ManagementMessageState extends State<ManagementMessage>
         const SizedBox(height: 10),
         Container(width: 60, height: 4, color: Colors.red),
         const SizedBox(height: 12),
-        Text(
+        const Text(
           "Guiding RamaDBK Towards Global Excellence",
           style: TextStyle(fontSize: 18, color: Colors.black54),
           textAlign: TextAlign.center,
@@ -88,7 +88,7 @@ class _ManagementMessageState extends State<ManagementMessage>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 10,
@@ -109,12 +109,12 @@ class _ManagementMessageState extends State<ManagementMessage>
               ),
             ),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               "Message from the President",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 15),
-            Text(
+            const Text(
               "Dear Valued Partners and Customers,",
               style: TextStyle(
                 fontSize: 18,
@@ -123,7 +123,7 @@ class _ManagementMessageState extends State<ManagementMessage>
               ),
             ),
             const SizedBox(height: 15),
-            Text(
+            const Text(
               "Since our establishment in 1988, RamaDBK has been committed to excellence in the automotive export industry. "
               "What began as a vision to bridge the gap between Japanese quality vehicles and global markets has grown into "
               "a trusted enterprise serving customers in over 50 countries.",
@@ -131,7 +131,7 @@ class _ManagementMessageState extends State<ManagementMessage>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 15),
-            Text(
+            const Text(
               "Our success story is built on three fundamental principles: unwavering commitment to quality, "
               "transparent business practices, and exceptional customer service. These principles continue to guide "
               "us as we embrace new technologies and expand our global presence.",
@@ -139,13 +139,13 @@ class _ManagementMessageState extends State<ManagementMessage>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 15),
-            Text(
+            const Text(
               "Thank you for your trust in RamaDBK. We look forward to serving you and contributing to your success.",
               style: TextStyle(fontSize: 16, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            Text(
+            const Text(
               "Jagath C. Ramanayake",
               style: TextStyle(
                 fontSize: 18,
@@ -153,7 +153,7 @@ class _ManagementMessageState extends State<ManagementMessage>
                 color: Colors.black87,
               ),
             ),
-            Text(
+            const Text(
               "President & CEO",
               style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
@@ -168,7 +168,7 @@ class _ManagementMessageState extends State<ManagementMessage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           "Leadership & Industry Recognition",
           style: TextStyle(
             fontSize: 24,
@@ -232,7 +232,7 @@ class _ManagementMessageState extends State<ManagementMessage>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 10,
@@ -254,14 +254,14 @@ class _ManagementMessageState extends State<ManagementMessage>
             const SizedBox(height: 15),
             Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
               description,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
                 height: 1.5,

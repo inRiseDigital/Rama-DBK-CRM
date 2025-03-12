@@ -112,7 +112,7 @@ class AboutHeroComponent extends StatelessWidget {
         children: [
           Text(
             text,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
           ),
           const SizedBox(width: 8),
           Icon(icon, size: 18),

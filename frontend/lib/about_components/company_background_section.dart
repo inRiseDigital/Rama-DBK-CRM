@@ -38,7 +38,7 @@ class _CompanyBackgroundSectionState extends State<CompanyBackgroundSection>
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        constraints: BoxConstraints(maxWidth: 1200),
+        constraints: const BoxConstraints(maxWidth: 1200),
         child: FadeTransition(
           opacity: _fadeInAnimation,
           child: Padding(
@@ -61,13 +61,13 @@ class _CompanyBackgroundSectionState extends State<CompanyBackgroundSection>
   }
 
   Widget _buildTitleSection() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             "Our Legacy of Excellence",
             style: TextStyle(
               fontSize: 48,
@@ -88,7 +88,7 @@ class _CompanyBackgroundSectionState extends State<CompanyBackgroundSection>
             ),
           ),
           const SizedBox(height: 24),
-          Text(
+          const Text(
             "A Pioneer in Japanese Vehicle Export Since 1988",
             style: TextStyle(fontSize: 18, color: Colors.black54, height: 1.5),
             textAlign: TextAlign.center,
@@ -141,7 +141,7 @@ class _CompanyBackgroundSectionState extends State<CompanyBackgroundSection>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
+        const Text(
           "Our Core Values",
           style: TextStyle(
             fontSize: 24,
@@ -261,7 +261,7 @@ class _CompanyBackgroundSectionState extends State<CompanyBackgroundSection>
                   child: Text(
                     description,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                    style: const TextStyle(fontSize: 14, color: Colors.black54),
                   ),
                 ),
               ),

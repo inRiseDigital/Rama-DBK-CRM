@@ -11,7 +11,7 @@ class _SparePartsDescriptionState extends State<SparePartsDescription> {
   // Scroll controller to track scrolling position
   late ScrollController _scrollController;
   // Map to track if sections have been animated
-  Map<String, bool> _animatedSections = {
+  final Map<String, bool> _animatedSections = {
     'title': false,
     'intro': false,
     'usedParts': false,
@@ -181,13 +181,13 @@ class _SparePartsDescriptionState extends State<SparePartsDescription> {
             _animatedSections['intro']! ? Offset.zero : const Offset(0, 0.2),
         duration: const Duration(milliseconds: 1000),
         curve: Curves.easeOutQuart,
-        child: Text(
+        child: const Text(
           "Many fully functional auto-parts are found on Japanese used and new cars, "
           "which are very much in demand as spare parts for the overseas market as well as "
           "in the domestic market. All appropriate car parts are carefully selected by professionals. "
           "You can order all type of Used Car parts, Auto Body Parts, Rebuilt Auto Parts, Refurbished Auto Parts, "
           "Auto Electrical Parts, Engine Parts of all types of makes.",
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             height: 1.8,
             color: Colors.black87,
@@ -223,12 +223,12 @@ class _SparePartsDescriptionState extends State<SparePartsDescription> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            Text(
+            const Text(
               "We can also assist you with finding auto parts if you need them for the damaged cars "
               "you decide to buy from us. Once these parts are purchased; we can put them into your car "
               "so you don't have to pay shipping for these parts and will receive them together with the car. "
               "RamaDBK is one of the few companies, which offer services listed below.",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 height: 1.8,
                 color: Colors.black87,

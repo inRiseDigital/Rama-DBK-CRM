@@ -15,11 +15,11 @@ class StatisticsSection extends StatelessWidget {
     final bool isMobile = screenSize.width < 768;
     
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 60.0),
+      padding: const EdgeInsets.symmetric(vertical: 60.0),
       decoration: BoxDecoration(
         color: Colors.black,
         image: DecorationImage(
-          image: AssetImage('assets/images/car_03.png'),
+          image: const AssetImage('assets/images/car_03.png'),
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
             Colors.black.withOpacity(0.8),
@@ -33,11 +33,11 @@ class StatisticsSection extends StatelessWidget {
               ? Column(
                   children: [
                     _buildStatItem('25+', 'Years of Experience'),
-                    SizedBox(height: 30.0),
+                    const SizedBox(height: 30.0),
                     _buildStatItem('5000+', 'Happy Customers'),
-                    SizedBox(height: 30.0),
+                    const SizedBox(height: 30.0),
                     _buildStatItem('500+', 'Premium Vehicles'),
-                    SizedBox(height: 30.0),
+                    const SizedBox(height: 30.0),
                     _buildStatItem('15+', 'Industry Awards'),
                   ],
                 )
@@ -60,16 +60,16 @@ class StatisticsSection extends StatelessWidget {
       children: [
         Text(
           number,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.red,
             fontWeight: FontWeight.bold,
             fontSize: 36.0,
           ),
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16.0,
           ),

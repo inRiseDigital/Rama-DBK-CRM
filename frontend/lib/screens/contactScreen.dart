@@ -45,10 +45,10 @@ class ContactScreen extends StatelessWidget {
                   builder: (context, constraints) {
                     if (constraints.maxWidth > 1200) {
                       // Desktop layout
-                      return IntrinsicHeight(
+                      return const IntrinsicHeight(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: const [
+                          children: [
                             Expanded(
                               flex: 5,
                               child: ContactFormComponent(),

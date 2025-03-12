@@ -44,13 +44,13 @@ class AboutSection extends StatelessWidget {
               const SizedBox(height: 20.0),
 
               // Paragraph
-              Text(
+              const Text(
                 'RamaDBK is a renowned name in the automotive industry, specializing in premium and luxury vehicles. With over 25 years of experience, we have established ourselves as leaders in providing exceptional vehicles and outstanding customer service.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16.0,
                   height: 1.6,
-                  color: const Color.fromRGBO(97, 97, 97, 1),
+                  color: Color.fromRGBO(97, 97, 97, 1),
                 ),
               ),
               const SizedBox(height: 30.0),
